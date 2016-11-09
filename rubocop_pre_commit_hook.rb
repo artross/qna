@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
+# rubocop:disable Style/RedundantFreeze
 ADDED_OR_MODIFIED = /^\s*(A|AM|M)/.freeze
+# rubocop:enable Style/RedundantFreeze
 
 changed_files = `git status --porcelain`.split(/\n/)
 unstaged_files = `git ls-files -m`.split(/\n/)
