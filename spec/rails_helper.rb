@@ -57,8 +57,8 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
 
-  Shoulda::Matchers.configure do |config|
-    config.integrate do |with|
+  Shoulda::Matchers.configure do |c|
+    c.integrate do |with|
       with.test_framework :rspec
       with.library :rails
     end
