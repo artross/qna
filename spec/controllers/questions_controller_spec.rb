@@ -16,7 +16,7 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'GET #show' do
     let(:question) { create(:question) }
-    before { get :show, params: {id: question} }
+    before { get :show, params: { id: question } }
 
     it 'assings question from params' do
       expect(assigns(:question)).to eq(question)
@@ -42,22 +42,22 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'POST #create' do
     context 'with valid object' do
       it 'persists an object' do
-        expect { post :create, params: {question: attributes_for(:question)} }.to change(Question, :count).by(1)
+        expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
       end
 
       it 'redirects to show view' do
-        post :create, params: {question: attributes_for(:question)}
+        post :create, params: { question: attributes_for(:question) }
         expect(response).to redirect_to question_path(assigns(:question))
       end
     end
 
     context 'invalid object' do
       it "doesn't persist an object" do
-        expect { post :create, params: {question: attributes_for(:invalid_question)} }.not_to change(Question, :count)
+        expect { post :create, params: { question: attributes_for(:invalid_question) } }.not_to change(Question, :count)
       end
 
       it 're-renders new view' do
-        post :create, params: {question: attributes_for(:invalid_question)}
+        post :create, params: { question: attributes_for(:invalid_question) }
         expect(response).to render_template :new
       end
     end
