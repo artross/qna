@@ -49,8 +49,11 @@ group :development do
 end
 
 group :test do
-  gem'shoulda-matchers'
+  gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 end
+
+gem 'slim'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
