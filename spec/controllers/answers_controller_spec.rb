@@ -42,11 +42,7 @@ RSpec.describe AnswersController, type: :controller do
   describe 'POST #create' do
     context 'with valid object' do
       it 'persists an object' do
-        # this line is needed for FactoryGirl to create a default question with 2 answers
-        # otherwise Answer.count will be changed not by 1 but by answers_count + 1
-        # if there's a better way - please show it
         question
-
         expect do
           post :create, params: { question_id: question, answer: attributes_for(:answer) }
         end.to change(Answer, :count).by(1)
