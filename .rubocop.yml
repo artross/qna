@@ -7,7 +7,7 @@ AllCops:
   Exclude:
     - 'db/**/*.rb'
     - 'vendor/**/*'
-    - 'spec/**/*'
+    - 'spec/**/*.rb'
     - 'bin/**/*'
   DisplayCopNames: true
 Rails:
