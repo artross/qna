@@ -48,6 +48,12 @@ RSpec.describe AnswersController, type: :controller do
         end.to change(Answer, :count).by(1)
       end
 
+      # couldn't figure out how to test this through change()
+      it 'links an object with its assosiated parent' do
+        post :create, params: { question_id: question, answer: attributes_for(:answer) }
+        expect(assigns(:answer).question).to eq(question)
+      end
+
       it 'redirects to index view' do
         post :create, params: { question_id: question, answer: attributes_for(:answer) }
         expect(response).to redirect_to(question_answers_path(assigns(:question)))
