@@ -3,21 +3,23 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:question) { create(:question_with_answers) }
 
-  describe 'GET #index' do
-    before { get :index, params: { question_id: question } }
+  # answers#index action is disabled due to changes in questions/show view
 
-    it 'assigns parent question' do
-      expect(assigns(:question)).to eq question
-    end
-
-    it 'assigns array of answers for the parent question' do
-      expect(assigns(:answers)).to match_array(question.answers)
-    end
-
-    it 'renders index view' do
-      expect(response).to render_template :index
-    end
-  end
+  # describe 'GET #index' do
+  #   before { get :index, params: { question_id: question } }
+  #
+  #   it 'assigns parent question' do
+  #     expect(assigns(:question)).to eq question
+  #   end
+  #
+  #   it 'assigns array of answers for the parent question' do
+  #     expect(assigns(:answers)).to match_array(question.answers)
+  #   end
+  #
+  #   it 'renders index view' do
+  #     expect(response).to render_template :index
+  #   end
+  # end
 
   describe 'GET #new' do
     before { get :new, params: { question_id: question } }

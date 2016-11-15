@@ -1,10 +1,12 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [:show]
   before_action :find_question
 
-  def index
-    @answers = @question.answers
-  end
+  # answers#index action is disabled due to changes in questions/show view
+
+  # def index
+  #   @answers = @question.answers
+  # end
 
   def new
     @answer = @question.answers.new

@@ -1,0 +1,8 @@
+= @question.title
+br
+= @question.body
+br
+- @question.answers.each do |a|
+  = a.body
+  br
+end

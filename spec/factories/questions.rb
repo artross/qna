@@ -1,7 +1,10 @@
 FactoryGirl.define do
+  sequence(:title) { |n| "Title #{n}" }
+  sequence(:body) { |n| "Body #{n}" }
+
   factory :question do
-    title "MyString"
-    body "MyText"
+    title
+    body
 
     factory :question_with_answers do
       transient do
