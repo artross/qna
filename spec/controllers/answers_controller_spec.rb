@@ -22,6 +22,7 @@ RSpec.describe AnswersController, type: :controller do
   # end
 
   describe 'GET #new' do
+    log_user_in
     before { get :new, params: { question_id: question } }
 
     it 'assigns parent question' do
@@ -42,6 +43,7 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'POST #create' do
+    log_user_in
     context 'with valid object' do
       it 'persists an object' do
         question

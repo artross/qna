@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 feature "New answer", %{
-  AS: an authenticated user
+  AS: a signed in user
   I WANT TO: create a new answer to a specific question
   IN ORDER TO: help the author of this question
 } do

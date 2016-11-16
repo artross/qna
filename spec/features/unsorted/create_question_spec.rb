@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 feature "New question", %{
-  AS: an authenticated user
+  AS: a signed in user
   I WANT TO: create a new question
   IN ORDER TO: recieve answers
 } do
