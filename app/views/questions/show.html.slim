@@ -1,8 +1,7 @@
-= @question.title
-br
-= @question.body
-br
-- @question.answers.each do |a|
-  = a.body
-  br
-end
+p= @question.title
+p= @question.body
+p= link_to "Add answer", new_question_answer_path(@question)
+- if @question.answers.count > 0
+  p= "Answers:"
+  - @question.answers.each do |a|
+    p= a.body

@@ -1,12 +1,10 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: [:show]
+  before_action :authenticate_user!, except: [:index, :show]
   before_action :find_question
 
-  # answers#index action is disabled due to changes in questions/show view
-
-  # def index
-  #   @answers = @question.answers
-  # end
+  def index
+    redirect_to question_path(@question)
+  end
 
   def new
     @answer = @question.answers.new
@@ -14,7 +12,7 @@ class AnswersController < ApplicationController
 
   def create
     @answer = @question.answers.create(answer_params)
-    @answer.persisted? ? (redirect_to question_answers_path(@question)) : (render :new)
+    @answer.persisted? ? (redirect_to question_path(@question)) : (render :new)
   end
 
   private

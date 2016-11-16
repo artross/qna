@@ -1,6 +1,6 @@
+p= link_to "Ask a new question", new_question_path
+br
 - @questions.each do |q|
-  = q.title
-  br
-  = q.body
-  br
+  p= q.title
+  p= q.body
 end
