@@ -58,7 +58,7 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.extend ControllerMacros, type: :controller
-  config.include FeatureAuthentication, type: :feature
+  config.include FeatureHelpers, type: :feature
 
   Shoulda::Matchers.configure do |c|
     c.integrate do |with|

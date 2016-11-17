@@ -6,21 +6,20 @@ feature "New question", %{
   IN ORDER TO: recieve answers
 } do
 
+  given(:question) { attributes_for(:question) }
+
   scenario "User creates a new question" do
     do_login(create(:user))
 
     visit questions_path
     click_on "Ask a new question"
 
-    @question = build(:question)
-
-    fill_in "Title", with: @question.title
-    fill_in "Body", with: @question.body
+    fill_in "Title", with: question[:title]
+    fill_in "Body", with: question[:body]
     click_on "Ask Question"
 
-    #expect(current_path).to eq question_path(??) <- How to get newly created question's id without Question.last?
-    expect(page).to have_content @question.title
-    expect(page).to have_content @question.body
+    expect(page).to have_content question[:title]
+    expect(page).to have_content question[:body]
   end
 
   scenario "Guest can't create a new question" do

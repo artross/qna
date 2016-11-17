@@ -5,6 +5,7 @@ FactoryGirl.define do
   factory :question do
     title
     body
+    author
 
     factory :question_with_answers do
       transient do
@@ -12,7 +13,7 @@ FactoryGirl.define do
       end
 
       after(:create) do |question, factory|
-        create_list(:answer, factory.answers_count, question: question)
+        create_list(:answer, factory.answers_count, question: question, author: question.author)
       end
     end
   end
@@ -20,5 +21,6 @@ FactoryGirl.define do
   factory :invalid_question, class: Question do
     title nil
     body nil
+    author
   end
 end

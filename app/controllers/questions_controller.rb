@@ -10,12 +10,18 @@ class QuestionsController < ApplicationController
   end
 
   def new
-    @question = Question.new
+    @question = current_user.questions.new
   end
 
   def create
-    @question = Question.create(question_params)
+    @question = current_user.questions.create(question_params)
     @question.persisted? ? (redirect_to @question) : (render :new)
+  end
+
+  def destroy
+    @question = Question.find(params[:id])
+    @question.destroy if @question.author == current_user
+    redirect_to questions_path
   end
 
   private

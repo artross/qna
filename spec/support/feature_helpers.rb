@@ -1,4 +1,4 @@
-module FeatureAuthentication
+module FeatureHelpers
   def do_registration(user)
     visit root_path
     click_on "Register"

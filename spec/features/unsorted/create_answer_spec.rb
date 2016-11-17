@@ -7,24 +7,22 @@ feature "New answer", %{
 } do
 
   given(:question) { create(:question) }
+  given(:answer) { attributes_for(:answer) }
 
-  scenario "Authenticated user creates a new answer" do
+  scenario "User creates a new answer" do
     do_login(create(:user))
 
     visit question_path(question)
+    fill_in "Body", with: answer[:body]
     click_on "Add answer"
 
-    answer_body = "Anything you like to share"
-
-    fill_in "Body", with: answer_body
-    click_on "Post"
-
     expect(current_path).to eq question_path(question)
-    expect(page).to have_content answer_body
+    expect(page).to have_content answer[:body]
   end
 
   scenario "Guest can't create a new answer" do
     visit question_path(question)
+    fill_in "Body", with: answer[:body]
     click_on "Add answer"
 
     expect(current_path).to eq new_user_session_path

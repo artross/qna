@@ -5,7 +5,33 @@ feature "Delete answer", %{
   I WANT TO: delete my answer
   IN ORDER TO: remove pointless information
 } do
-  scenario "Author deletes his answer"
-  scenario "Non-author can't delete another's answer"
-  scenario "Guest can't delete an answer"
+
+  given!(:users) { create_list(:user, 2) }
+  given!(:question) { create(:question, author: users[0]) }
+  given!(:answer) { create(:answer, question: question, author: users[1]) }
+
+  scenario "Author deletes his answer" do
+    do_login(users[1])
+    visit question_path(question)
+    click_on "Delete answer"
+
+    expect(current_path).to eq question_path(question)
+    expect(page).not_to have_content(answer.body)  # answer was successfully removed
+  end
+
+  scenario "Non-author can't delete another's answer" do
+    do_login(users[0])
+    visit question_path(question)
+    click_on "Delete answer"
+
+    expect(current_path).to eq question_path(question)
+    expect(page).to have_content(answer.body)  # answer is still there
+  end
+
+  scenario "Guest can't delete an answer" do
+    visit question_path(question)
+    click_on "Delete answer"
+
+    expect(page).to have_content "You need to sign in or sign up before continuing."
+  end
 end

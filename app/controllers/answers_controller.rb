@@ -6,13 +6,24 @@ class AnswersController < ApplicationController
     redirect_to question_path(@question)
   end
 
-  def new
-    @answer = @question.answers.new
-  end
+  # answers#new doesn't exist anymore
+
+  # def new
+  #   @answer = @question.answers.new
+  # end
 
   def create
-    @answer = @question.answers.create(answer_params)
-    @answer.persisted? ? (redirect_to question_path(@question)) : (render :new)
+    @answer = @question.answers.new(answer_params)
+    @answer.author_id = current_user.id  # <- dunno how to do it better...
+    @answer.save
+    # @answer.persisted? ? (redirect_to question_path(@question)) : (render :new)
+    redirect_to question_path(@question) # redirect anyway
+  end
+
+  def destroy
+    @answer = Answer.find(params[:id])
+    @answer.destroy if @answer.author == current_user
+    redirect_to question_path(@question)
   end
 
   private
