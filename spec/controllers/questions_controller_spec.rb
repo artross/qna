@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
   describe 'GET #index' do
-    let(:questions) { create_list(:question, 2) }
+    let(:questions) { create_pair(:question) }
     before { get :index }
 
     it 'assigns an array' do
@@ -42,9 +42,11 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'POST #create' do
     log_user_in
-    context 'with valid object' do
-      it 'persists an object' do
-        expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
+    context 'with valid question' do
+      it 'persists a question with its assosiated author' do
+        expect do
+          post :create, params: { author_id: @user, question: attributes_for(:question) }
+        end.to change(@user.questions, :count).by(1)
       end
 
       it 'redirects to show view' do
@@ -53,9 +55,11 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
 
-    context 'invalid object' do
-      it "doesn't persist an object" do
-        expect { post :create, params: { question: attributes_for(:invalid_question) } }.not_to change(Question, :count)
+    context 'invalid question' do
+      it "doesn't persist a question" do
+        expect do
+          post :create, params: { author_id: @user, question: attributes_for(:invalid_question) }
+        end.not_to change(Question, :count)
       end
 
       it 're-renders new view' do
@@ -67,16 +71,33 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'DELETE #destroy' do
     log_user_in
-    let(:question) { create(:question, author: @user) }
 
-    it 'removes object from DB' do
-      question
-      expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+    context "with an author's question" do
+      let(:question) { create(:question, author: @user) }
+
+      it 'removes the question from DB' do
+        question
+        expect { delete :destroy, params: { id: question } }.to change(Question, :count).by(-1)
+      end
+
+      it 'redirects to index view' do
+        delete :destroy, params: { id: question }
+        expect(response).to redirect_to questions_path
+      end
     end
 
-    it 'redirects to index view' do
-      delete :destroy, params: { id: question }
-      expect(response).to redirect_to questions_path
+    context "with another's question" do
+      let(:question) { create(:question) }
+
+      it "doesn't remove the question from DB" do
+        question
+        expect { delete :destroy, params: { id: question } }.not_to change(Question, :count)
+      end
+
+      it 're-renders show view' do
+        delete :destroy, params: { id: question }
+        expect(response).to render_template :show
+      end
     end
   end
 end

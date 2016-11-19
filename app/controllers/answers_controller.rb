@@ -1,29 +1,32 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: :show
   before_action :find_question
 
-  def index
-    redirect_to question_path(@question)
-  end
-
-  # answers#new doesn't exist anymore
-
-  # def new
-  #   @answer = @question.answers.new
-  # end
-
   def create
-    @answer = @question.answers.new(answer_params)
-    @answer.author_id = current_user.id  # <- dunno how to do it better...
-    @answer.save
-    # @answer.persisted? ? (redirect_to question_path(@question)) : (render :new)
-    redirect_to question_path(@question) # redirect anyway
+    @answer = @question.answers.create(answer_params.merge(author: current_user))
+    if @answer.persisted? then
+      flash[:notice] = "Answer successfully added."
+      redirect_to @question
+    else
+      flash.now[:alert] = "Unable to add such an answer!"
+      render :'questions/show'
+    end
   end
 
   def destroy
     @answer = Answer.find(params[:id])
-    @answer.destroy if @answer.author == current_user
-    redirect_to question_path(@question)
+    if @answer.author_id == current_user.id then
+      if @answer.destroy then
+        flash[:notice] = "Answer successfully removed."
+        redirect_to question_path(@question)
+      else
+        flash.now[:alert] = "Something went wrong..."
+        render :'questions/show'
+      end
+    else
+      flash[:alert] = "Unable to delete another's answer!"
+      render :'questions/show'
+    end
   end
 
   private

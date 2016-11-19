@@ -6,7 +6,7 @@ feature "Delete question", %{
   IN ORDER TO: remove something nobody could benefit from
 } do
 
-  given(:users) { create_list(:user, 2) }
+  given(:users) { create_pair(:user) }
   given(:question) { create(:question, author: users[0]) }
 
   scenario "Author deletes his question" do
@@ -18,6 +18,7 @@ feature "Delete question", %{
     expect(current_path).to eq questions_path
     expect(page).not_to have_content question.title
     expect(page).not_to have_content question.body
+    expect(page).to have_content "Question successfully removed."
   end
 
   scenario "Non-author can't delete another's question" do

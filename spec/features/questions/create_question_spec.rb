@@ -20,6 +20,7 @@ feature "New question", %{
 
     expect(page).to have_content question[:title]
     expect(page).to have_content question[:body]
+    expect(page).to have_content "Question successfully created."
   end
 
   scenario "Guest can't create a new question" do

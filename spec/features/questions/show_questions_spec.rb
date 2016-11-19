@@ -1,15 +1,15 @@
 require 'rails_helper'
 
-feature "Guest functionality", %{
-  AS: a guest
+feature "Show questions", %{
+  AS: any visitor
   I WANT TO: see questions and answers
   IN ORDER TO: obtain useful information
 } do
 
-  given!(:questions) { create_list(:question, 2) }
+  given!(:questions) { create_pair(:question) }
   given!(:question) { create(:question_with_answers) }
 
-  scenario "Guest can see a list of questions" do
+  scenario "Any visitor can see a list of questions" do
     visit questions_path
 
     expect(current_path).to eq questions_path
@@ -19,7 +19,7 @@ feature "Guest functionality", %{
     end
   end
 
-  scenario "Guest can see particular question with all its answers" do
+  scenario "Any visitor can see particular question with all its answers" do
     visit question_path(question)
 
     expect(current_path).to eq question_path(question)

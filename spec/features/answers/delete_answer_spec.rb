@@ -6,7 +6,7 @@ feature "Delete answer", %{
   IN ORDER TO: remove pointless information
 } do
 
-  given!(:users) { create_list(:user, 2) }
+  given!(:users) { create_pair(:user) }
   given!(:question) { create(:question, author: users[0]) }
   given!(:answer) { create(:answer, question: question, author: users[1]) }
 
@@ -16,7 +16,8 @@ feature "Delete answer", %{
     click_on "Delete answer"
 
     expect(current_path).to eq question_path(question)
-    expect(page).not_to have_content(answer.body)  # answer was successfully removed
+    expect(page).not_to have_content(answer.body)
+    expect(page).to have_content "Answer successfully removed."
   end
 
   scenario "Non-author can't delete another's answer" do
@@ -24,8 +25,8 @@ feature "Delete answer", %{
     visit question_path(question)
     click_on "Delete answer"
 
-    expect(current_path).to eq question_path(question)
-    expect(page).to have_content(answer.body)  # answer is still there
+    expect(page).to have_content(answer.body)
+    expect(page).to have_content "Unable to delete another's answer!"
   end
 
   scenario "Guest can't delete an answer" do

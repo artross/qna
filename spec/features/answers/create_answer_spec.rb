@@ -18,6 +18,7 @@ feature "New answer", %{
 
     expect(current_path).to eq question_path(question)
     expect(page).to have_content answer[:body]
+    expect(page).to have_content "Answer successfully added."
   end
 
   scenario "Guest can't create a new answer" do

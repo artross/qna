@@ -2,35 +2,24 @@ require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
 
-  describe 'GET #index' do
-    let(:question) { create(:question) }
-    before { get :index, params: { question_id: question } }
-
-    it 'assigns parent question' do
-      expect(assigns(:question)).to eq question
-    end
-
-    it "redirects to parent question's show view" do
-      expect(response).to redirect_to(question_path(question))
-    end
-  end
-
   describe 'POST #create' do
     log_user_in
     let(:question) { create(:question, author: @user) }
 
-    context 'with valid object' do
-      it 'persists an object' do
+    context 'with valid answer' do
+      # Is it possible to DRY out this kind of tests? Or the ones like in DELETE #destroy?
+      it 'persists an answer with its assosiated question' do
         question
         expect do
           post :create, params: { question_id: question, answer: attributes_for(:answer) }
-        end.to change(Answer, :count).by(1)
+        end.to change(question.answers, :count).by(1)
       end
 
-      # couldn't figure out how to test this through change()
-      it 'links an object with its assosiated parent' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer) }
-        expect(assigns(:answer).question).to eq(question)
+      it 'persists an answer with its assosiated author' do
+        question
+        expect do
+          post :create, params: { question_id: question, answer: attributes_for(:answer) }
+        end.to change(@user.answers, :count).by(1)
       end
 
       it "redirects to parent question's show view" do
@@ -39,8 +28,8 @@ RSpec.describe AnswersController, type: :controller do
       end
     end
 
-    context 'with invalid object' do
-      it "doesn't persist an object" do
+    context 'with invalid answer' do
+      it "doesn't persist an answer" do
         question
 
         expect do
@@ -57,17 +46,34 @@ RSpec.describe AnswersController, type: :controller do
 
   describe 'DELETE #destroy' do
     log_user_in
-    let(:question) { create(:question, author: @user) }
-    let(:answer) { create(:answer, question: question, author: @user) }
+    let(:question) { create(:question) }
 
-    it 'removes object from DB' do
-      answer
-      expect { delete :destroy, params: { question_id: question, id: answer } }.to change(Answer, :count).by(-1)
+    context "with an author's answer" do
+      let(:answer) { create(:answer, question: question, author: @user) }
+
+      it 'removes an answer from DB' do
+        answer
+        expect { delete :destroy, params: { question_id: question, id: answer } }.to change(Answer, :count).by(-1)
+      end
+
+      it "redirects to parent's question's show view" do
+        delete :destroy, params: { question_id: question, id: answer }
+        expect(response).to redirect_to question_path(question)
+      end
     end
 
-    it 'redirects to index view' do
-      delete :destroy, params: { question_id: question, id: answer }
-      expect(response).to redirect_to question_path(question)
+    context "with another's answer" do
+      let(:answer) { create(:answer, question: question) }
+
+      it "doesn't remove an answer from DB" do
+        answer
+        expect { delete :destroy, params: { question_id: question, id: answer } }.not_to change(Answer, :count)
+      end
+
+      it "redirects to parent's question's show view" do
+        delete :destroy, params: { question_id: question, id: answer }
+        expect(response).to render_template :'questions/show'
+      end
     end
   end
 end
