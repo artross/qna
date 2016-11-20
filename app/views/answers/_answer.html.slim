@@ -1,0 +1,3 @@
+- answer ||= @answer
+p= answer.body
+p id="answer#{answer.id}" = link_to "Delete answer", question_answer_path(@question, answer), method: :delete
