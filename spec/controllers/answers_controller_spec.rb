@@ -11,20 +11,20 @@ RSpec.describe AnswersController, type: :controller do
       it 'persists an answer with its assosiated question' do
         question
         expect do
-          post :create, params: { question_id: question, answer: attributes_for(:answer) }
+          post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
         end.to change(question.answers, :count).by(1)
       end
 
       it 'persists an answer with its assosiated author' do
         question
         expect do
-          post :create, params: { question_id: question, answer: attributes_for(:answer) }
+          post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
         end.to change(@user.answers, :count).by(1)
       end
 
-      it "redirects to parent question's show view" do
-        post :create, params: { question_id: question, answer: attributes_for(:answer) }
-        expect(response).to redirect_to(question_path(assigns(:question)))
+      it "renders create.js template" do
+        post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
+        expect(response).to render_template :create
       end
     end
 
@@ -33,13 +33,13 @@ RSpec.describe AnswersController, type: :controller do
         question
 
         expect do
-          post :create, params: { question_id: question, answer: attributes_for(:invalid_answer) }
+          post :create, params: { question_id: question, answer: attributes_for(:invalid_answer), format: :js }
         end.not_to change(Answer, :count)
       end
 
-      it "redirects to parent question's show view" do
-        post :create, params: { question_id: question, answer: attributes_for(:answer) }
-        expect(response).to redirect_to(question_path(assigns(:question)))
+      it "renders create.js template" do
+        post :create, params: { question_id: question, answer: attributes_for(:answer), format: :js }
+        expect(response).to render_template :create
       end
     end
   end

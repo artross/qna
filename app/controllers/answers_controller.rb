@@ -5,8 +5,7 @@ class AnswersController < ApplicationController
   def create
     @answer = @question.answers.create(answer_params.merge(author: current_user))
     if @answer.persisted? then
-      flash[:notice] = "Answer successfully added."
-      redirect_to @question
+      flash.now[:notice] = "Answer successfully added."
     else
       flash.now[:alert] = "Unable to add such an answer!"
       render :'questions/show'

@@ -9,7 +9,7 @@ feature "New answer", %{
   given(:question) { create(:question) }
   given(:answer) { attributes_for(:answer) }
 
-  scenario "User creates a new answer" do
+  scenario "User creates a new answer", js: true do
     do_login(create(:user))
 
     visit question_path(question)
@@ -17,8 +17,7 @@ feature "New answer", %{
     click_on "Add answer"
 
     expect(current_path).to eq question_path(question)
-    expect(page).to have_content answer[:body]
-    expect(page).to have_content "Answer successfully added."
+    within('.answers') { expect(page).to have_content answer[:body] }
   end
 
   scenario "Guest can't create a new answer" do

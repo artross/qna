@@ -1,14 +1,10 @@
-p= @question.title
+h1= @question.title
 p= @question.body
 - if signed_in? && current_user == @question.author
   p= link_to "Delete question", question_path(@question), method: :delete
-- if @question.answers.count > 0
-  p= "Answers:"
-  - @question.answers.each do |a|
-    p= a.body
-    p id="answer#{a.id}" = link_to "Delete answer", question_answer_path(@question, a), method: :delete
-  end
-= form_for [@question, @question.answers.build] do |f|
+.answers
+  = render 'questions/answers'
+= form_for [@question, @question.answers.build], remote: true do |f|
   p
     = f.label :body
     = f.text_area :body
