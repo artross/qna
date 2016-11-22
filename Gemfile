@@ -54,7 +54,7 @@ group :test do
   gem 'rails-controller-testing'
   gem 'capybara'
   gem 'launchy'
-  gem 'selenium-webdriver'
+  gem 'poltergeist'
   gem 'database_cleaner'
 end
 
