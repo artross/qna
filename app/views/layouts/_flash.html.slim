@@ -1,0 +1,4 @@
+- if flash.any? then
+  - flash.each do |type, msg|
+    div class="alert alert-#{bootstrap_alert_class(type)}"
+      = msg

@@ -10,7 +10,7 @@ feature "Delete answer", %{
   given!(:question) { create(:question, author: users[0]) }
   given!(:answer) { create(:answer, question: question, author: users[1]) }
 
-  scenario "Author deletes his answer" do
+  scenario "Author deletes his answer", js: true do
     do_login(users[1])
     visit question_path(question)
     click_on "Delete answer"
