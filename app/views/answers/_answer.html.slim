@@ -4,4 +4,5 @@ li.list-group-item
   .lead= answer.body
   ul.list-inline
     li.text-muted= "Author: #{answer.author.email}"
-    li id="a#{answer.id}" = link_to "Delete", question_answer_path(@question, answer), method: :delete
+    - if signed_in? && (current_user == answer.author)
+      li= link_to "Delete", question_answer_path(@question, answer), method: :delete, id: "del_a#{answer.id}"

@@ -6,23 +6,27 @@ feature "New answer", %{
   IN ORDER TO: help the author of this question
 } do
 
+  given(:user) { create(:user) }
   given(:question) { create(:question) }
   given(:answer) { attributes_for(:answer) }
 
   scenario "User creates a new answer", js: true do
-    do_login(create(:user))
+    do_login(user)
 
     visit question_path(question)
-    fill_in "Body", with: answer[:body]
+    fill_in "Your answer", with: answer[:body]
     click_on "Add answer"
 
     expect(current_path).to eq question_path(question)
-    within('.answers') { expect(page).to have_content answer[:body] }
+    within('.answers') do
+      expect(page).to have_content answer[:body]
+      expect(page).to have_content "Author: #{user.email}"
+    end
   end
 
   scenario "Guest can't create a new answer" do
     visit question_path(question)
-    fill_in "Body", with: answer[:body]
+    fill_in "Your answer", with: answer[:body]
     click_on "Add answer"
 
     expect(current_path).to eq new_user_session_path

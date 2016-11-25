@@ -13,26 +13,23 @@ feature "Delete answer", %{
   scenario "Author deletes his answer", js: true do
     do_login(users[1])
     visit question_path(question)
-    click_on "Delete answer"
+    click_on "del_a#{answer.id}"
 
     expect(current_path).to eq question_path(question)
-    expect(page).not_to have_content(answer.body)
+    within('.answers') { expect(page).not_to have_content(answer.body) }
     expect(page).to have_content "Answer successfully removed."
   end
 
   scenario "Non-author can't delete another's answer" do
     do_login(users[0])
     visit question_path(question)
-    click_on "Delete answer"
 
-    expect(page).to have_content(answer.body)
-    expect(page).to have_content "Unable to delete another's answer!"
+    expect(page).not_to have_link("del_a#{answer.id}")
   end
 
   scenario "Guest can't delete an answer" do
     visit question_path(question)
-    click_on "Delete answer"
 
-    expect(page).to have_content "You need to sign in or sign up before continuing."
+    expect(page).not_to have_link("del_a#{answer.id}")
   end
 end

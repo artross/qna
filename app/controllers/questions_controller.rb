@@ -17,10 +17,8 @@ class QuestionsController < ApplicationController
     @question = current_user.questions.create(question_params)
     if @question.persisted? then
       flash[:notice] = "Question successfully created."
-      redirect_to @question
+      redirect_to questions_path
     else
-      # There's no feature to test this particular message (and some others too)
-      # Should I test'em in controller specs?
       flash.now[:alert] = "Unable to add such a question!"
       render :new
     end

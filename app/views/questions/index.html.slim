@@ -1,8 +1,9 @@
-ul.list-group
-  - @questions.each do |q|
-    li.list-group-item
-      h2= link_to "#{q.title}", question_path(q)
-      p.lead= q.body
-      = render partial: "questions/question_meta", locals: { question: q }
+.questions
+  ul.list-group
+    - @questions.each do |q|
+      li.list-group-item
+        h2= link_to "#{q.title}", question_path(q)
+        p.lead= q.body
+        = render partial: "questions/question_meta", locals: { question: q }
 
 = link_to "Ask a new question", new_question_path, class: "btn btn-primary"

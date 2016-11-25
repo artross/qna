@@ -6,10 +6,11 @@ feature "New question", %{
   IN ORDER TO: recieve answers
 } do
 
+  given(:user) { create(:user) }
   given(:question) { attributes_for(:question) }
 
   scenario "User creates a new question" do
-    do_login(create(:user))
+    do_login(user)
 
     visit questions_path
     click_on "Ask a new question"
@@ -18,8 +19,13 @@ feature "New question", %{
     fill_in "Body", with: question[:body]
     click_on "Ask Question"
 
-    expect(page).to have_content question[:title]
-    expect(page).to have_content question[:body]
+    expect(current_path).to eq questions_path
+    within('.questions') do
+      expect(page).to have_content question[:title]
+      expect(page).to have_content question[:body]
+      expect(page).to have_content "Author: #{user.email}"
+      expect(page).to have_content "Answers: 0"
+    end
     expect(page).to have_content "Question successfully created."
   end
 
