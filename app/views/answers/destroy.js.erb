@@ -1,0 +1,10 @@
+$('#answers-count').html('Answers: <%= @question.answers.count %>');
+$('<%= "#answer#{@answer.id}" %>').remove();
+
+$('.flash').html('');
+<% if flash.any? then %>
+  $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>
+
+$('.answer-errors').html('');
+$('.answer-errors').removeClass('alert alert-danger');

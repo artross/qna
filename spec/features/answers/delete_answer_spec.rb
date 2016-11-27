@@ -16,6 +16,7 @@ feature "Delete answer", %{
     click_on "del_a#{answer.id}"
 
     expect(current_path).to eq question_path(question)
+    expect(page).to have_content "Answers: 0"
     within('.answers') { expect(page).not_to have_content(answer.body) }
     expect(page).to have_content "Answer successfully removed."
   end

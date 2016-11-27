@@ -11,5 +11,6 @@ html
       = link_to "QnA", root_path, class: "navbar-brand"
       ul.nav.navbar-nav= render "devise/menu/login_items"
     .container
-      = render "layouts/flash"
+      .flash
+        = render "layouts/flash"
       = yield

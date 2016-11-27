@@ -8,7 +8,6 @@ class AnswersController < ApplicationController
       flash.now[:notice] = "Answer successfully added."
     else
       flash.now[:alert] = "Unable to add such an answer!"
-      render :'questions/show'
     end
   end
 
@@ -16,14 +15,13 @@ class AnswersController < ApplicationController
     @answer = Answer.find(params[:id])
     if @answer.author_id == current_user.id then
       if @answer.destroy then
-        flash[:notice] = "Answer successfully removed."
-        redirect_to question_path(@question)
+        flash.now[:notice] = "Answer successfully removed."
       else
         flash.now[:alert] = "Something went wrong..."
         render :'questions/show'
       end
     else
-      flash[:alert] = "Unable to delete another's answer!"
+      flash.now[:alert] = "Unable to delete another's answer!"
       render :'questions/show'
     end
   end

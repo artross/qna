@@ -1,8 +1,8 @@
 - answer ||= @answer
 
-li.list-group-item
+li.list-group-item id== "answer#{answer.id}"
   .lead= answer.body
   ul.list-inline
     li.text-muted= "Author: #{answer.author.email}"
     - if signed_in? && (current_user == answer.author)
-      li= link_to "Delete", question_answer_path(@question, answer), method: :delete, id: "del_a#{answer.id}"
+      li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true

@@ -11,6 +11,7 @@
 
 .well
   = form_for [@question, @question.answers.build], remote: true do |f|
+    .answer-errors 
     .form-group
       = f.label :body, "Your answer"
       = f.text_area :body, class: "form-control"

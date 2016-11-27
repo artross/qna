@@ -1,2 +1,22 @@
-$('.answers').append("<%= j render 'answer' %>");
-$('#answer_body').val('');
+$('.answer-errors').html('');
+$('.answer-errors').removeClass('alert alert-danger');
+
+<% if @answer.errors.any? %>
+  <% @answer.errors.full_messages.each do |msg| %>
+    $('.answer-errors').append("<p><%= j msg %></p>");
+  <% end %>
+  $('.answer-errors').addClass('alert alert-danger');
+<% else %>
+  $('#answers-count').html('Answers: <%= @question.answers.count %>');
+  <% if @question.answers.count == 1 then %>
+    $('.answers').append("<h3 class='text-muted'>Answers:</h3>");
+    $('.answers').append("<ul class='list-group'></ul>");
+  <% end %>
+  $('.answers').find('ul.list-group').append("<%= j render 'answer' %>");
+  $('#answer_body').val('');
+<% end %>
+
+$('.flash').html('');
+<% if flash.any? then %>
+  $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>
