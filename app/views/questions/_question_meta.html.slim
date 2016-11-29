@@ -1,5 +1,6 @@
 ul.list-inline.text-muted
   li= "Author: #{question.author.email}"
   li#answers-count= "Answers: #{question.answers.count}"
-  - if signed_in? && (current_user == question.author)
+  - if is_author
+    li.edit-question-link= link_to "Edit", "#", id: "edit_q#{question.id}", data: { question_id: question.id }
     li= link_to "Delete", question_path(question), method: :delete, id: "del_q#{question.id}"

@@ -12,7 +12,7 @@ feature "Delete answer", %{
 
   scenario "Author deletes his answer", js: true do
     do_login(users[1])
-    visit question_path(question)
+    click_on "q#{question.id}"
     click_on "del_a#{answer.id}"
 
     expect(current_path).to eq question_path(question)

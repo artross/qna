@@ -1,11 +1,4 @@
 .well
-  = form_for @question do |f|
-    .form-group
-      = f.label :title
-      = f.text_field :title, class: "form-control"
-    .form-group
-      = f.label :body
-      = f.text_area :body, class: "form-control"
-    = f.submit "Ask Question", class: "btn btn-primary"
+  = render partial: 'questions/edit_question_form', locals: { question: @question, submit_button_name: "Ask Question" }
 
 = link_to "Back to all Questions", questions_path

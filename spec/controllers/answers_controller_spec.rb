@@ -54,18 +54,18 @@ RSpec.describe AnswersController, type: :controller do
       context 'valid changes' do
         it "doesn't add or remove any answers" do
           expect do
-            patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+            patch :update, params: { question_id: question, id: answer, answer: { body: "Edited body" }, format: :js }
           end.not_to change(Answer, :count)
         end
 
         it 'persists an updated answer' do
-          patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+          patch :update, params: { question_id: question, id: answer, answer: { body: "Edited body" }, format: :js }
           answer.reload
-          expect(answer.body).to eq "#{old_answer_body} edited"
+          expect(answer.body).to eq "Edited body"
         end
 
         it "renders update.js template" do
-          patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+          patch :update, params: { question_id: question, id: answer, answer: { body: "Edited body" }, format: :js }
           expect(response).to render_template :update
         end
       end
@@ -90,7 +90,7 @@ RSpec.describe AnswersController, type: :controller do
       let!(:answer) { create(:answer, question: question) }
 
       it "doesn't persist an answer" do
-        patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+        patch :update, params: { question_id: question, id: answer, answer: { body: "Edited body" }, format: :js }
         answer.reload
         expect(answer.body).to eq old_answer_body
       end

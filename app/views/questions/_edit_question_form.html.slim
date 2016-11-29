@@ -1,0 +1,14 @@
+- remote ||= false
+- hidden ||= false
+- form_class = hidden ? "hidden" : ""
+- form_id = question.id ? "edit-question-form#{question.id}" : "new-question-form"
+
+= form_for question, html: { id: form_id, class: form_class }, remote: remote do |f|
+  .question-errors
+  .form-group
+    = f.label :title
+    = f.text_field :title, class: "form-control"
+  .form-group
+    = f.label :body
+    = f.text_area :body, class: "form-control"
+  = f.submit submit_button_name, class: "btn btn-primary"

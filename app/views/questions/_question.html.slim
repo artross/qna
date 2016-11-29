@@ -1,0 +1,12 @@
+- is_author = signed_in? && (current_user == question.author)
+
+h2.question-title= link_to "#{question.title}", question_path(question), id: "q#{question.id}"
+.question-body.lead= question.body
+ul.list-inline.text-muted
+  li= "Author: #{question.author.email}"
+  li#answers-count= "Answers: #{question.answers.count}"
+  - if is_author
+    li.edit-question-link= link_to "Edit", "#", id: "edit_q#{question.id}", data: { question_id: question.id }
+    li= link_to "Delete", question_path(question), method: :delete, id: "del_q#{question.id}"
+- if is_author
+  = render partial: 'questions/edit_question_form', locals: { question: question, submit_button_name: "Save", hidden: true, remote: true }

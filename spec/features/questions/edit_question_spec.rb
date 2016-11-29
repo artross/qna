@@ -10,25 +10,20 @@ feature 'Edit question', %{
   given!(:question) { create(:question, author: users[0]) }
 
   context "From index page" do
-    scenario "Author edits his question", remote: true do
+    scenario "Author edits his question", js: true do
       do_login(users[0])
-      visit questions_path
 
-      edit_question_and_check_valid(question, "#question#{question.id}", { title: "#{question.title} edited", body: "#{question.body} edited" })
-      expect(current_path).to eq questions_path
+      edit_question_and_check_valid(question, { title: "Edited title", body: "Edited body" })
     end
 
-    scenario "Author can't make his question blank", remote: true do
+    scenario "Author can't make his question blank", js: true do
       do_login(users[0])
-      visit questions_path
 
-      edit_question_and_check_blank(question, "#question#{question.id}")
-      expect(current_path).to eq questions_path
+      edit_question_and_check_blank(question)
     end
 
     scenario "Non-author can't edit another's question" do
       do_login(users[1])
-      visit questions_path
 
       expect(page).not_to have_link("edit_q#{question.id}")
     end
@@ -41,25 +36,23 @@ feature 'Edit question', %{
   end
 
   context "From show page" do
-    scenario "Author edits his question", remote: true do
+    scenario "Author edits his question", js: true do
       do_login(users[0])
-      visit question_path(question)
+      click_on "q#{question.id}"
 
-      edit_question_and_check_valid(question, '.question', { title: "#{question.title} edited", body: "#{question.body} edited"})
-      expect(current_path).to eq question_path(question)
+      edit_question_and_check_valid(question, { title: "Edited title", body: "Edited body"})
     end
 
-    scenario "Author can't make his question blank", remote: true do
+    scenario "Author can't make his question blank", js: true do
       do_login(users[0])
-      visit question_path(question)
+      click_on "q#{question.id}"
 
-      edit_question_and_check_blank(question, '.question')
-      expect(current_path).to eq question_path(question)
+      edit_question_and_check_blank(question)
     end
 
     scenario "Non-author can't edit another's question" do
       do_login(users[1])
-      visit question_path(question)
+      click_on "q#{question.id}"
 
       expect(page).not_to have_link("edit_q#{question.id}")
     end

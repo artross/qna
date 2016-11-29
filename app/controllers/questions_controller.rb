@@ -1,5 +1,6 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
+  before_action :find_question, only: [:update, :destroy]
 
   def index
     @questions = Question.all
@@ -24,8 +25,20 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def update
+    if @question.author_id == current_user.id then
+      if @question.update(question_params) then
+        flash.now[:notice] = "Question successfully updated"
+      else
+        flash.now[:alert] = "Unable to make such changes to the question!"
+      end
+    else
+      flash.now[:alert] = "Unable to edit another's question!"
+      render :show
+    end
+  end
+
   def destroy
-    @question = Question.find(params[:id])
     if @question.author_id == current_user.id then
       if @question.destroy then
         flash[:notice] = "Question successfully removed."
@@ -41,6 +54,10 @@ class QuestionsController < ApplicationController
   end
 
   private
+
+  def find_question
+    @question = Question.find(params[:id])
+  end
 
   def question_params
     params.require(:question).permit(:title, :body)

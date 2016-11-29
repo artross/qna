@@ -1,0 +1,22 @@
+var target_question = $('#question<%= @question.id %>');
+var target_question_errors = target_question.find('.question-errors');
+
+target_question_errors.html('');
+target_question_errors.removeClass('alert alert-danger');
+
+<% if @question.errors.any? %>
+  <% @question.errors.full_messages.each do |msg| %>
+    target_question_errors.append("<p><%= j msg %></p>");
+  <% end %>
+  target_question_errors.addClass('alert alert-danger');
+<% else %>
+  target_question.find('.question-title').html('<%= link_to "#{@question.title}", question_path(@question), id: "q#{@question.id}" %>');
+  target_question.find('.question-body').html("<%= @question.body %>");
+  $('#edit_q<%= @question.id %>').closest('li').removeClass('hidden');
+  $('#edit-question-form<%= @question.id %>').addClass('hidden');
+<% end %>
+
+$('.flash').html('');
+<% if flash.any? then %>
+  $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>

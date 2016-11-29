@@ -69,6 +69,67 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
+  describe 'PATCH #update' do
+    log_user_in
+    let(:old_question_title) { question.title }
+    let(:old_question_body) { question.body }
+
+    context "with an author's question's" do
+      let!(:question) { create(:question, author: @user) }
+
+      context 'valid changes' do
+        it "doesn't add or remove any questions" do
+          expect do
+            patch :update, params: { id: question, question: { title: "Edited title", body: "Edited body" }, format: :js }
+          end.not_to change(Question, :count)
+        end
+
+        it 'persists an updated question' do
+          patch :update, params: { id: question, question: { title: "Edited title", body: "Edited body" }, format: :js }
+          question.reload
+          expect(question.title).to eq "Edited title"
+          expect(question.body).to eq "Edited body"
+        end
+
+        it "renders update.js template" do
+          patch :update, params: { id: question, question: { title: "Edited title", body: "Edited body" }, format: :js }
+          expect(response).to render_template :update
+        end
+      end
+
+      context 'invalid changes' do
+        it "doesn't persist the question" do
+          patch :update, params: { id: question, question: { title: '', body: '' }, format: :js }
+          question.reload
+          expect(question.title).to eq old_question_title
+          expect(question.body).to eq old_question_body
+        end
+
+        it "renders update.js template" do
+          patch :update, params: { id: question, question: { title: '', body: '' }, format: :js }
+          expect(response).to render_template :update
+        end
+      end
+    end
+
+    context "with another's question" do
+      log_user_in
+      let!(:question) { create(:question) }
+
+      it "doesn't persist the question" do
+        patch :update, params: { id: question, question: { title: "Edited title", body: "Edited body" }, format: :js }
+        question.reload
+        expect(question.title).to eq old_question_title
+        expect(question.body).to eq old_question_body
+      end
+
+      it "renders show view" do
+        patch :update, params: { id: question, question: { title: "Edited title", body: "Edited body" }, format: :js }
+        expect(response).to render_template :'questions/show'
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     log_user_in
 
