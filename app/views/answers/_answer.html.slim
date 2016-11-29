@@ -1,8 +1,12 @@
 - answer ||= @answer
+- is_author = signed_in? && (current_user == answer.author)
 
 li.list-group-item id== "answer#{answer.id}"
-  .lead= answer.body
+  .answer-body.lead= answer.body
   ul.list-inline
     li.text-muted= "Author: #{answer.author.email}"
-    - if signed_in? && (current_user == answer.author)
+    - if is_author
+      li.edit-answer-link= link_to "Edit", "#", id: "edit_a#{answer.id}", data: { answer_id: answer.id }
       li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true
+  - if is_author
+    = render partial: 'answers/edit_answer_form', locals: { answer: answer, submit_button_name: "Save", hidden: true }

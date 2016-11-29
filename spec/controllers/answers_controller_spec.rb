@@ -7,7 +7,6 @@ RSpec.describe AnswersController, type: :controller do
     let(:question) { create(:question, author: @user) }
 
     context 'with valid answer' do
-      # Is it possible to DRY out this kind of tests? Or the ones like in DELETE #destroy?
       it 'persists an answer with its assosiated question' do
         question
         expect do
@@ -44,6 +43,65 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
+  describe 'PATCH #update' do
+    log_user_in
+    let(:old_answer_body) { answer.body }
+
+    context "with an author's answer's" do
+      let!(:question) { create(:question, author: @user) }
+      let!(:answer) { create(:answer, question: question, author: @user) }
+
+      context 'valid changes' do
+        it "doesn't add or remove any answers" do
+          expect do
+            patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+          end.not_to change(Answer, :count)
+        end
+
+        it 'persists an updated answer' do
+          patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+          answer.reload
+          expect(answer.body).to eq "#{old_answer_body} edited"
+        end
+
+        it "renders update.js template" do
+          patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+          expect(response).to render_template :update
+        end
+      end
+
+      context 'invalid changes' do
+        it "doesn't persist an answer" do
+          patch :update, params: { question_id: question, id: answer, answer: { body: '' }, format: :js }
+          answer.reload
+          expect(answer.body).to eq old_answer_body
+        end
+
+        it "renders update.js template" do
+          patch :update, params: { question_id: question, id: answer, answer: { body: '' }, format: :js }
+          expect(response).to render_template :update
+        end
+      end
+    end
+
+    context "with another's answer" do
+      log_user_in
+      let!(:question) { create(:question) }
+      let!(:answer) { create(:answer, question: question) }
+
+      it "doesn't persist an answer" do
+        patch :update, params: { question_id: question, id: answer, answer: { body: "#{old_answer_body} edited" }, format: :js }
+        answer.reload
+        expect(answer.body).to eq old_answer_body
+      end
+
+      it "re-renders parent's question's show view" do
+        patch :update, params: { question_id: question, id: answer, answer: { body: '' }, format: :js }
+        expect(response).to render_template :'questions/show'
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     log_user_in
     let(:question) { create(:question) }
@@ -56,7 +114,7 @@ RSpec.describe AnswersController, type: :controller do
         expect { delete :destroy, params: { question_id: question, id: answer, format: :js } }.to change(Answer, :count).by(-1)
       end
 
-      it "redirects to parent's question's show view" do
+      it "renders destroy.js template" do
         delete :destroy, params: { question_id: question, id: answer, format: :js }
         expect(response).to render_template :destroy
       end
@@ -70,7 +128,7 @@ RSpec.describe AnswersController, type: :controller do
         expect { delete :destroy, params: { question_id: question, id: answer, format: :js } }.not_to change(Answer, :count)
       end
 
-      it "redirects to parent's question's show view" do
+      it "re-renders parent's question's show view" do
         delete :destroy, params: { question_id: question, id: answer, format: :js }
         expect(response).to render_template :'questions/show'
       end

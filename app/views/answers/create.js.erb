@@ -1,11 +1,13 @@
-$('.answer-errors').html('');
-$('.answer-errors').removeClass('alert alert-danger');
+var new_answer_errors = $('.new-answer').find('.answer-errors');
+
+new_answer_errors.html('');
+new_answer_errors.removeClass('alert alert-danger');
 
 <% if @answer.errors.any? %>
   <% @answer.errors.full_messages.each do |msg| %>
-    $('.answer-errors').append("<p><%= j msg %></p>");
+    new_answer_errors.append("<p><%= j msg %></p>");
   <% end %>
-  $('.answer-errors').addClass('alert alert-danger');
+  new_answer_errors.addClass('alert alert-danger');
 <% else %>
   $('#answers-count').html('Answers: <%= @question.answers.count %>');
   <% if @question.answers.count == 1 then %>

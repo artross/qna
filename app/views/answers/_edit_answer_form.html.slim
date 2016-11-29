@@ -1,0 +1,10 @@
+- hidden ||= false
+- form_class = hidden ? "hidden" : ""
+- form_id = answer.id ? "edit-answer-form#{answer.id}" : "new-answer-form"
+
+= form_for [@question, answer], html: { id: form_id, class: form_class }, remote: true do |f|
+  .answer-errors
+  .form-group
+    = f.label :body, "Your answer"
+    = f.text_area :body, class: "form-control"
+  = f.submit submit_button_name, class: "btn btn-primary"

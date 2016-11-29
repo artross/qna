@@ -1,0 +1,21 @@
+var target_answer = $('#answer<%= @answer.id %>');
+var target_answer_errors = target_answer.find('.answer-errors');
+
+target_answer_errors.html('');
+target_answer_errors.removeClass('alert alert-danger');
+
+<% if @answer.errors.any? %>
+  <% @answer.errors.full_messages.each do |msg| %>
+    target_answer_errors.append("<p><%= j msg %></p>");
+  <% end %>
+  target_answer_errors.addClass('alert alert-danger');
+<% else %>
+  target_answer.find('.answer-body').html("<%= @answer.body %>");
+  $('#edit_a<%= @answer.id %>').closest('li').removeClass('hidden');
+  $('#edit-answer-form<%= @answer.id %>').addClass('hidden');
+<% end %>
+
+$('.flash').html('');
+<% if flash.any? then %>
+  $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>

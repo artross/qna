@@ -29,6 +29,17 @@ feature "New question", %{
     expect(page).to have_content "Question successfully created."
   end
 
+  scenario "User can't create empty question" do
+    do_login(user)
+
+    visit questions_path
+    click_on "Ask a new question"
+    # don't fill anything, leave all fields blank
+    click_on "Ask Question"
+
+    expect(page).to have_content "Unable to add such a question!"
+  end
+
   scenario "Guest can't create a new question" do
     visit questions_path
     click_on "Ask a new question"

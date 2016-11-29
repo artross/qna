@@ -11,6 +11,20 @@ class AnswersController < ApplicationController
     end
   end
 
+  def update
+    @answer = Answer.find(params[:id])
+    if @answer.author_id == current_user.id then
+      if @answer.update(answer_params) then
+        flash.now[:notice] = "Answer successfully updated"
+      else
+        flash.now[:alert] = "Unable to make such changes to an answer!"
+      end
+    else
+      flash.now[:alert] = "Unable to edit another's answer!"
+      render :'questions/show'
+    end
+  end
+
   def destroy
     @answer = Answer.find(params[:id])
     if @answer.author_id == current_user.id then

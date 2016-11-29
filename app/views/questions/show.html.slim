@@ -9,12 +9,8 @@
     h3.text-muted= "Answers:"
     ul.list-group= render @question.answers
 
-.well
-  = form_for [@question, @question.answers.build], remote: true do |f|
-    .answer-errors 
-    .form-group
-      = f.label :body, "Your answer"
-      = f.text_area :body, class: "form-control"
-    = f.submit "Add answer", class: "btn btn-primary"
+.new-answer
+  .well
+    = render partial: 'answers/edit_answer_form', locals: { answer: @question.answers.build, submit_button_name: "Add answer" }
 
 = link_to "Back to all Questions", questions_path
