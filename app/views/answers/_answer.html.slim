@@ -1,10 +1,18 @@
 - answer ||= @answer
-- is_author = signed_in? && (current_user == answer.author)
+- is_author = signed_in? && (current_user.id == answer.author_id)
+- is_questions_author = signed_in? && (current_user.id == @question.author_id)
 
 li.list-group-item id== "answer#{answer.id}"
+  - if answer.best_answer
+    .best-answer.alert.alert-warning= "Best answer!"
   .answer-body.lead= answer.body
   ul.list-inline
     li.text-muted= "Author: #{answer.author.email}"
+    - if is_questions_author
+      - if answer.best_answer
+        li.best-answer-button.hidden= button_to "Pick as Best", best_answer_question_answer_path(@question, answer), remote: true
+      - else
+        li.best-answer-button= button_to "Pick as Best", best_answer_question_answer_path(@question, answer), remote: true
     - if is_author
       li.edit-answer-link= link_to "Edit", "#", id: "edit_a#{answer.id}", data: { answer_id: answer.id }
       li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true

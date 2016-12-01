@@ -1,6 +1,7 @@
 class AnswersController < ApplicationController
-  before_action :authenticate_user!, except: :show
+  before_action :authenticate_user!
   before_action :find_question
+  before_action :find_answer, except: [:create]
 
   def create
     @answer = @question.answers.create(answer_params.merge(author: current_user))
@@ -12,7 +13,6 @@ class AnswersController < ApplicationController
   end
 
   def update
-    @answer = Answer.find(params[:id])
     if @answer.author_id == current_user.id then
       if @answer.update(answer_params) then
         flash.now[:notice] = "Answer successfully updated"
@@ -26,7 +26,6 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    @answer = Answer.find(params[:id])
     if @answer.author_id == current_user.id then
       if @answer.destroy then
         flash.now[:notice] = "Answer successfully removed."
@@ -40,10 +39,33 @@ class AnswersController < ApplicationController
     end
   end
 
+  def best_answer
+    @current_best_answer = @question.answers.detect { |a| a.best_answer }
+    if @question.author_id == current_user.id then
+      Answer.transaction do
+        @current_best_answer.update!(best_answer: false) if @current_best_answer
+        @answer.update!(best_answer: true)
+      end
+
+      if @answer.best_answer then
+        flash.now[:notice] = "Best answer successfully set."
+      else
+        flash.now[:alert] = "Something went wrong..."
+      end
+    else
+      flash.now[:alert] = "Unable to pick the best answer in another's question!"
+      render :'questions/show'
+    end
+  end
+
   private
 
   def find_question
     @question = Question.find(params[:question_id])
+  end
+
+  def find_answer
+    @answer = Answer.find(params[:id])
   end
 
   def answer_params

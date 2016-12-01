@@ -1,4 +1,4 @@
-- is_author = signed_in? && (current_user == question.author)
+- is_author = signed_in? && (current_user.id == question.author_id)
 
 h2.question-title= link_to "#{question.title}", question_path(question), id: "q#{question.id}"
 .question-body.lead= question.body

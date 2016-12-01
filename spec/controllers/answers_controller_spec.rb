@@ -2,6 +2,26 @@ require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
 
+  describe 'POST #best_answer' do
+    log_user_in
+    let(:question) { create(:question, author: @user) }
+    let(:answer1) { create(:answer, question: question, best_answer: false) }
+    let(:answer2) { create(:answer, question: question, best_answer: true) }
+
+    it 'sets the answer to be "the best answer"' do
+      post :best_answer, params: { question_id: question, id: answer1, format: :js }
+      answer1.reload
+      expect(answer1.best_answer).to be true
+    end
+
+    it 'changes the best answer, prohibiting multiple "best answers"' do
+      answer2
+      post :best_answer, params: { question_id: question, id: answer1, format: :js }
+      answer2.reload
+      expect(answer2.best_answer).to be false
+    end
+  end
+
   describe 'POST #create' do
     log_user_in
     let(:question) { create(:question, author: @user) }
