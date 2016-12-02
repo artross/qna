@@ -1,4 +1,4 @@
-$(document).on('turbolinks:load', () => {
+$(document).on('turbolinks:load', function() {
   $('.edit-question-link').on('click','a', function(e) {
     e.preventDefault();
     $(this).closest('li').addClass('hidden');

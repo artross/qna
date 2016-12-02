@@ -12,6 +12,15 @@ RSpec.configure do |config|
   config.before(:each) { DatabaseCleaner.start }
   config.after(:each) { DatabaseCleaner.clean }
 
-  # Capybara.javascript_driver = :poltergeist
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(
+      app,
+      timeout: 90, js_errors: true,
+      phantomjs_logger: Logger.new(STDOUT), window_size: [1020, 1024]
+    )
+  end
+
+  Capybara.javascript_driver = :poltergeist
+  # Capybara.ignore_hidden_elements = false
   # Capybara.default_max_wait_time = 5
 end

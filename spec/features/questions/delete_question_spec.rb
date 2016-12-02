@@ -12,9 +12,11 @@ feature "Delete question", %{
   context "From index page" do
     scenario "Author deletes his question" do
       do_login(users[0])
-      visit questions_path
+      click_on "Delete", id: "del_q#{question.id}"
 
-      delete_question_and_check(question)
+      expect(page).not_to have_content question.title
+      expect(page).not_to have_content question.body
+      expect(page).to have_content "Question successfully removed."
       expect(current_path).to eq questions_path
     end
 
@@ -34,9 +36,12 @@ feature "Delete question", %{
   context "From show page" do
     scenario "Author deletes his question" do
       do_login(users[0])
-      visit question_path(question)
+      click_on "q#{question.id}"
+      click_on "Delete", id: "del_q#{question.id}"
 
-      delete_question_and_check(question)
+      expect(page).not_to have_content question.title
+      expect(page).not_to have_content question.body
+      expect(page).to have_content "Question successfully removed."
       expect(current_path).to eq questions_path
     end
 

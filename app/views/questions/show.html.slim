@@ -5,7 +5,7 @@
 .answers
   - if @question.answers.count > 0
     h3.text-muted= "Answers:"
-    ul.list-group= render @question.answers
+    ul.list-group= render @question.answers.sort_by { |a| a.best_answer ? -1: 0 }
 
 .new-answer
   .well

@@ -19,7 +19,7 @@ feature "Best answer", %{
       within("#answer#{answer.id}") do
         click_on "Pick as Best"
         expect(page).to have_content "Best answer!"
-        expect(page).not_to have_content "Pick as Best"
+        expect(page).not_to have_button "Pick as Best"
       end
     end
 
@@ -31,7 +31,7 @@ feature "Best answer", %{
       within("#answer#{answer.id}") { click_on "Pick as Best" }
       within("#answer#{best_answer.id}") do
         expect(page).not_to have_content "Best answer!"
-        expect(page).to have_content "Pick as Best"
+        expect(page).to have_button "Pick as Best"
       end
     end
 
@@ -42,7 +42,7 @@ feature "Best answer", %{
 
       within("#answer#{best_answer.id}") do
         expect(page).to have_content "Best answer!"
-        expect(page).not_to have_content "Pick as Best"
+        expect(page).not_to have_button "Pick as Best"
       end
     end
   end
@@ -56,5 +56,11 @@ feature "Best answer", %{
   scenario "Guest can't pick the best answer" do
     visit question_path(question)
     expect(page).not_to have_link "Pick as Best"
+  end
+
+  scenario "Best answer is always shown first" do
+    best_answer
+    visit question_path(question)
+    # ... and then what? I don't know how to test this.
   end
 end
