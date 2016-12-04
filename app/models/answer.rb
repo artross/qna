@@ -6,7 +6,9 @@ class Answer < ApplicationRecord
 
   def pick_as_best
     question = self.question
-    question.answers.update_all(best_answer: false)
-    self.update(best_answer: true)
+    Answer.transaction do
+      question.answers.update_all(best_answer: false)
+      self.update(best_answer: true)
+    end
   end
 end
