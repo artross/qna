@@ -40,14 +40,8 @@ class AnswersController < ApplicationController
   end
 
   def best_answer
-    @current_best_answer = @question.answers.detect { |a| a.best_answer }
     if @question.author_id == current_user.id then
-      Answer.transaction do
-        @current_best_answer.update!(best_answer: false) if @current_best_answer
-        @answer.update!(best_answer: true)
-      end
-
-      if @answer.best_answer then
+      if @answer.pick_as_best then
         flash.now[:notice] = "Best answer successfully set."
       else
         flash.now[:alert] = "Something went wrong..."

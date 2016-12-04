@@ -2,7 +2,7 @@
 - is_author = signed_in? && (current_user.id == answer.author_id)
 - is_questions_author = signed_in? && (current_user.id == @question.author_id)
 
-li.list-group-item id== "answer#{answer.id}"
+li.answer.list-group-item id== "answer#{answer.id}"
   - if answer.best_answer
     .best-answer.alert.alert-warning= "Best answer!"
   .answer-body.lead= answer.body

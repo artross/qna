@@ -20,7 +20,7 @@ RSpec.configure do |config|
     )
   end
 
-  Capybara.javascript_driver = :poltergeist
+  # Capybara.javascript_driver = :poltergeist
   # Capybara.ignore_hidden_elements = false
   # Capybara.default_max_wait_time = 5
 end

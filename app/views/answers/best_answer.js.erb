@@ -3,6 +3,7 @@ var oldBestAnswerContainer = oldBestAnswerDiv.closest('li');
 var newBestAnswerContainer = $('<%= "#answer#{@answer.id}" %>');
 
 <% if @answer.best_answer then %>
+  newBestAnswerContainer.detach();
   if (oldBestAnswerDiv.length) {
     oldBestAnswerDiv.detach();
     oldBestAnswerDiv.insertBefore(newBestAnswerContainer.find('.answer-body'));
@@ -12,6 +13,11 @@ var newBestAnswerContainer = $('<%= "#answer#{@answer.id}" %>');
     newBestAnswerDiv.insertBefore(newBestAnswerContainer.find('.answer-body'));
   }
   newBestAnswerContainer.find('.best-answer-button').addClass('hidden');
+  <% if @question.answers.count == 1 then %>
+    newBestAnswerContainer.appendTo('.answers');
+  <% else %>
+    newBestAnswerContainer.insertBefore('.answer:first-child');
+  <% end %>
 <% end %>
 
 $('.flash').html('');

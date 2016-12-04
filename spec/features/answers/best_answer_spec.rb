@@ -9,6 +9,7 @@ feature "Best answer", %{
   given!(:users) { create_pair(:user) }
   given!(:question) { create(:question, author: users[0]) }
   given!(:answer) { create(:answer, question: question) }
+  given(:second_answer) { create(:answer, question: question) }
   given(:best_answer) { create(:answer, question: question, best_answer: true) }
 
   context "Author" do
@@ -23,16 +24,18 @@ feature "Best answer", %{
       end
     end
 
-    scenario "changes the best answer", js: true do
+    scenario "changes the best answer, which goes top", js: true do
+      second_answer
       best_answer
       do_login(users[0])
       click_on "q#{question.id}"
 
-      within("#answer#{answer.id}") { click_on "Pick as Best" }
+      within("#answer#{second_answer.id}") { click_on "Pick as Best" }
       within("#answer#{best_answer.id}") do
         expect(page).not_to have_content "Best answer!"
         expect(page).to have_button "Pick as Best"
       end
+      within('.answer:first-child') { expect(page).to have_content "Best answer!" }
     end
 
     scenario "can't mark an answer as 'the best' when it's already marked as 'the best'", js: true do
@@ -59,8 +62,9 @@ feature "Best answer", %{
   end
 
   scenario "Best answer is always shown first" do
-    best_answer
+    best_answer # was created after 'answer'...
     visit question_path(question)
-    # ... and then what? I don't know how to test this.
+    # ...but is shown before
+    within('.answer:first-child') { expect(page).to have_content "Best answer!" }
   end
 end
