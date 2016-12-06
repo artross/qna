@@ -6,6 +6,8 @@ RSpec.describe Answer, type: :model do
   it { should have_db_index :question_id }
   it { should belong_to(:question) }
   it { should belong_to(:author).class_name("User") }
+  it { should have_many(:attachments).dependent(:destroy) }
+  it { should accept_nested_attributes_for :attachments }
 
   describe "#pick_as_best" do
     let (:question) { create(:question) }

@@ -16,5 +16,10 @@ li.answer.list-group-item id== "answer#{answer.id}"
     - if is_author
       li.edit-answer-link= link_to "Edit", "#", id: "edit_a#{answer.id}", data: { answer_id: answer.id }
       li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true
+  - if answer.attachments.any?
+    ul.list-inline.text-muted
+      li= "Attached files:"
+      - answer.attachments.each do |a|
+        li= link_to a.file.file.filename, a.file.url
   - if is_author
     = render partial: 'answers/edit_answer_form', locals: { answer: answer, submit_button_name: "Save", hidden: true }

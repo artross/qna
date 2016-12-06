@@ -1,17 +1,22 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :find_question, only: [:update, :destroy]
+  before_action :find_question, only: [:show, :update, :destroy]
 
   def index
     @questions = Question.all
   end
 
   def show
-    @question = Question.find(params[:id])
+    # this is unusable for some reason... it produces an error of "undefined method `email' for nil:NilClass"
+    # on line 10 in the 'answers/answer' partial
+    
+    # @answer = @question.answers.build
+    # @answer.attachments.build
   end
 
   def new
     @question = current_user.questions.new
+    @question.attachments.build
   end
 
   def create
@@ -60,6 +65,6 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body, attachments_attributes: [:file])
   end
 end

@@ -9,24 +9,47 @@ feature "New question", %{
   given(:user) { create(:user) }
   given(:question) { attributes_for(:question) }
 
-  scenario "User creates a new question" do
-    do_login(user)
+  context "User creates a new question" do
+    background do
+      do_login(user)
+      click_on "Ask a new question"
 
-    visit questions_path
-    click_on "Ask a new question"
-
-    fill_in "Title", with: question[:title]
-    fill_in "Body", with: question[:body]
-    click_on "Ask Question"
-
-    expect(current_path).to eq questions_path
-    within('.questions') do
-      expect(page).to have_content question[:title]
-      expect(page).to have_content question[:body]
-      expect(page).to have_content "Author: #{user.email}"
-      expect(page).to have_content "Answers: 0"
+      fill_in "Title", with: question[:title]
+      fill_in "Body", with: question[:body]
     end
-    expect(page).to have_content "Question successfully created."
+
+    scenario "without any attachments" do
+      click_on "Ask Question"
+
+      expect(current_path).to eq questions_path
+      within('.questions') do
+        expect(page).to have_content question[:title]
+        expect(page).to have_content question[:body]
+        expect(page).to have_content "Author: #{user.email}"
+        expect(page).to have_content "Answers: 0"
+        expect(page).not_to have_content "Attached files:"
+      end
+      expect(page).to have_content "Question successfully created."
+    end
+
+    scenario "with one attachment" do
+      attach_file "File", "#{Rails.root}/spec/files/a.txt"
+      click_on "Ask Question"
+
+      expect(current_path).to eq questions_path
+      within('.questions') do
+        expect(page).to have_content question[:title]
+        expect(page).to have_content question[:body]
+        expect(page).to have_content "Author: #{user.email}"
+        expect(page).to have_content "Answers: 0"
+        expect(page).to have_content "Attached files:"
+        expect(page).to have_link "a.txt"
+      end
+      expect(page).to have_content "Question successfully created."
+    end
+
+    scenario "with several attachments"
+
   end
 
   scenario "User can't create empty question" do

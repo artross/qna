@@ -8,5 +8,10 @@ ul.list-inline.text-muted
   - if is_author
     li.edit-question-link= link_to "Edit", "#", id: "edit_q#{question.id}", data: { question_id: question.id }
     li= link_to "Delete", question_path(question), method: :delete, id: "del_q#{question.id}"
+- if question.attachments.any?
+  ul.list-inline.text-muted
+    li= "Attached files:"
+    - question.attachments.each do |a|
+      li= link_to a.file.file.filename, a.file.url
 - if is_author
   = render partial: 'questions/edit_question_form', locals: { question: question, submit_button_name: "Save", hidden: true, remote: true }
