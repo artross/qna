@@ -4,8 +4,26 @@ class AnswersController < ApplicationController
   before_action :find_answer, except: [:create]
 
   def create
-    @answer = @question.answers.create(answer_params.merge(author: current_user))
-    if @answer.persisted? then
+    @answer = @question.answers.new(body: answer_params[:body], author: current_user)
+    Answer.transaction do
+      begin
+        @answer.save!
+
+        if answer_params[:attachments_attributes] &&
+           answer_params[:attachments_attributes]["0"] &&
+           answer_params[:attachments_attributes]["0"][:file] then
+
+          answer_params[:attachments_attributes]["0"][:file].each do |file|
+            @answer.attachments.create!(file: file)
+          end
+        end
+        @transaction_successful = true
+      rescue
+        @transaction_successful = false
+      end
+    end
+
+    if @transaction_successful then
       flash.now[:notice] = "Answer successfully added."
     else
       flash.now[:alert] = "Unable to add such an answer!"
@@ -14,11 +32,31 @@ class AnswersController < ApplicationController
 
   def update
     if @answer.author_id == current_user.id then
-      if @answer.update(answer_params) then
+      Answer.transaction do
+        begin
+          @answer.update!(body: answer_params[:body])
+
+          if answer_params[:attachments_attributes] &&
+             answer_params[:attachments_attributes]["0"] &&
+             answer_params[:attachments_attributes]["0"][:file] then
+
+            answer_params[:attachments_attributes]["0"][:file].each do |file|
+              @answer.attachments.create!(file: file)
+            end
+          end
+
+          @transaction_successful = true
+        rescue
+          @transaction_successful = false
+        end
+      end
+
+      if @transaction_successful then
         flash.now[:notice] = "Answer successfully updated"
       else
         flash.now[:alert] = "Unable to make such changes to an answer!"
       end
+
     else
       flash.now[:alert] = "Unable to edit another's answer!"
       render :'questions/show'
@@ -63,6 +101,6 @@ class AnswersController < ApplicationController
   end
 
   def answer_params
-    params.require(:answer).permit(:body, attachments_attributes: [:file])
+    params.require(:answer).permit(:body, attachments_attributes: [file: []])
   end
 end

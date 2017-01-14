@@ -52,6 +52,30 @@ feature 'Edit question', %{
       expect(page).to have_content "Body can't be blank"
     end
 
+    scenario "Author adds a new attachment and then removes it", js: true do
+      do_login(users[0])
+      click_on "edit_q#{question.id}"
+
+      within("#question#{question.id}") do
+        with_hidden_fields do
+          attach_file "question[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+        end
+        click_on "Save"
+
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+        end
+      end
+
+      click_on "edit_q#{question.id}"
+      within("#question#{question.id}") do
+        click_on "del_att#{question.attachments.first.id}"
+
+        expect(page).not_to have_link "a.txt"
+      end
+    end
+
     scenario "Non-author can't edit another's question" do
       do_login(users[1])
 
@@ -67,6 +91,7 @@ feature 'Edit question', %{
 
   context "From show page" do
     scenario "Author edits his question", js: true do
+      # this test always fails with a random error of either 'Unable to find... [Title, Body or Save]' or with 'ObsoleteNode'
       do_login(users[0])
       click_on "q#{question.id}"
       click_on "edit_q#{question.id}"
@@ -89,6 +114,7 @@ feature 'Edit question', %{
     end
 
     scenario "Author can't make his question blank", js: true do
+      # this test also always fails the same way as the one above
       do_login(users[0])
       click_on "q#{question.id}"
       click_on "edit_q#{question.id}"
@@ -108,6 +134,32 @@ feature 'Edit question', %{
       expect(page).to have_content "Unable to make such changes to the question"
       expect(page).to have_content "Title can't be blank"
       expect(page).to have_content "Body can't be blank"
+    end
+
+    scenario "Author adds a new attachment and then removes it", js: true do
+      # this test also always fails with different errors
+      do_login(users[0])
+      click_on "q#{question.id}"
+      click_on "edit_q#{question.id}"
+
+      within("#question#{question.id}") do
+        with_hidden_fields do
+          attach_file "question[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+        end
+        click_on "Save"
+
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+        end
+      end
+
+      click_on "edit_q#{question.id}"
+      within("#question#{question.id}") do
+        click_on "del_att#{question.attachments.first.id}"
+
+        expect(page).not_to have_link "a.txt"
+      end
     end
 
     scenario "Non-author can't edit another's question" do

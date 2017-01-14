@@ -14,7 +14,7 @@ new_answer_errors.removeClass('alert alert-danger');
     $('.answers').append("<h3 class='text-muted'>Answers:</h3>");
     $('.answers').append("<ul class='list-group'></ul>");
   <% end %>
-  $('.answers').find('ul.list-group').append("<%= j render 'answer' %>");
+  $('.answers').find('ul.list-group').append('<%= j render @answer %>');
   $('#answer_body').val('');
 <% end %>
 

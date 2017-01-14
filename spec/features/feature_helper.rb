@@ -24,3 +24,9 @@ RSpec.configure do |config|
   # Capybara.ignore_hidden_elements = false
   # Capybara.default_max_wait_time = 5
 end
+
+def with_hidden_fields
+  Capybara.ignore_hidden_elements = false
+  yield
+  Capybara.ignore_hidden_elements = true
+end

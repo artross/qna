@@ -7,21 +7,38 @@ class QuestionsController < ApplicationController
   end
 
   def show
-    # this is unusable for some reason... it produces an error of "undefined method `email' for nil:NilClass"
-    # on line 10 in the 'answers/answer' partial
-    
+    # this leads to strange "undefined method `email' for nil:NilClass" error
+    #   on line 10 in 'answers/answer' partial,
+    #   so a new Answer is now being built in question's show view
     # @answer = @question.answers.build
-    # @answer.attachments.build
   end
 
   def new
     @question = current_user.questions.new
-    @question.attachments.build
   end
 
   def create
-    @question = current_user.questions.create(question_params)
-    if @question.persisted? then
+    @question = current_user.questions.new(title: question_params[:title], body: question_params[:body])
+    Question.transaction do
+      begin
+        @question.save!
+
+        if question_params[:attachments_attributes] &&
+           question_params[:attachments_attributes]["0"] &&
+           question_params[:attachments_attributes]["0"][:file] then
+
+          question_params[:attachments_attributes]["0"][:file].each do |file|
+            @question.attachments.create!(file: file)
+          end
+        end
+        @transaction_successful = true
+      rescue
+        # probably do nothing?
+        @transaction_successful = false
+      end
+    end
+
+    if @transaction_successful then
       flash[:notice] = "Question successfully created."
       redirect_to questions_path
     else
@@ -32,8 +49,26 @@ class QuestionsController < ApplicationController
 
   def update
     if @question.author_id == current_user.id then
-      if @question.update(question_params) then
-        flash.now[:notice] = "Question successfully updated"
+      Question.transaction do
+        begin
+          @question.update!(title: question_params[:title], body: question_params[:body])
+
+          if question_params[:attachments_attributes] &&
+             question_params[:attachments_attributes]["0"] &&
+             question_params[:attachments_attributes]["0"][:file] then
+
+            question_params[:attachments_attributes]["0"][:file].each do |file|
+              @question.attachments.create!(file: file)
+            end
+          end
+          @transaction_successful = true
+        rescue
+          @transaction_successful = false
+        end
+      end
+
+      if @transaction_successful then
+        flash[:notice] = "Question successfully updated."
       else
         flash.now[:alert] = "Unable to make such changes to the question!"
       end
@@ -65,6 +100,6 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body, attachments_attributes: [:file])
+    params.require(:question).permit(:title, :body, attachments_attributes: [file: []])
   end
 end

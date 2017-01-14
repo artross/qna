@@ -5,7 +5,7 @@ class Answer < ApplicationRecord
 
   validates :body, :question_id, :author_id, presence: true
 
-  accepts_nested_attributes_for :attachments
+  accepts_nested_attributes_for :attachments, reject_if: :all_blank
 
   def pick_as_best
     question = self.question

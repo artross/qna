@@ -47,6 +47,31 @@ feature 'Edit answer', %{
     expect(page).to have_content "Body can't be blank"
   end
 
+  scenario "Author adds a new attachment and then removes it", js: true do
+    do_login(users[1])
+    click_on "q#{question.id}"
+    click_on "edit_a#{answer.id}"
+
+    within("#answer#{answer.id}") do
+      with_hidden_fields do
+        attach_file "answer[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+      end
+      click_on "Save"
+
+      within('.attached-files') do
+        expect(page).to have_content "Attached files:"
+        expect(page).to have_link "a.txt"
+      end
+    end
+
+    click_on "edit_a#{answer.id}"
+    within("#answer#{answer.id}") do
+      click_on "del_att#{answer.attachments.first.id}"
+
+      expect(page).not_to have_link "a.txt"
+    end
+  end
+
   scenario "Non-author can't edit another's answer" do
     do_login(users[0])
     visit question_path(question)

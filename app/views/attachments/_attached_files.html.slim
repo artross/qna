@@ -1,0 +1,10 @@
+- show_x_buttons ||= false
+- attachment_id_prefix = show_x_buttons ? "attachment-x" : "attachment"
+
+ul.list-inline.text-muted
+  li Attached files:
+  - attach_box.attachments.select{ |a| a.persisted? }.each do |a|
+    li id== "#{attachment_id_prefix}#{a.id}"
+      = link_to a.file.file.filename, a.file.url
+      - if show_x_buttons then
+        = link_to "x", attachment_path(a), method: :delete, id: "del_att#{a.id}", class: "btn btn-default btn-xs", remote: true

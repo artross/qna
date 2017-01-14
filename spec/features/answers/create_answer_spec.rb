@@ -25,13 +25,17 @@ feature "New answer", %{
       within('.answers') do
         expect(page).to have_content answer[:body]
         expect(page).to have_content "Author: #{user.email}"
-        expect(page).not_to have_content "Attached files:"
+        within('.attached-files') do
+          expect(page).not_to have_content "Attached files:"
+        end
       end
       expect(page).to have_content "Answer successfully added"
     end
 
     scenario "with one attachment", js: true do
-      attach_file "File", "#{Rails.root}/spec/files/a.txt"
+      with_hidden_fields do
+        attach_file "answer[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+      end
       click_on "Add answer"
 
       expect(current_path).to eq question_path(question)
@@ -39,13 +43,34 @@ feature "New answer", %{
       within('.answers') do
         expect(page).to have_content answer[:body]
         expect(page).to have_content "Author: #{user.email}"
-        expect(page).to have_content "Attached files:"
-        expect(page).to have_link "a.txt"
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+        end
       end
 
       expect(page).to have_content "Answer successfully added"
     end
-    scenario "with several attachments"#, js: true
+
+    scenario "with several attachments", js: true do
+      with_hidden_fields do
+        attach_file "answer[attachments_attributes][0][file][]", ["#{Rails.root}/spec/files/a.txt", "#{Rails.root}/spec/files/b.txt"]
+      end
+      click_on "Add answer"
+
+      expect(current_path).to eq question_path(question)
+      expect(page).to have_content "Answers: 1"
+      within('.answers') do
+        expect(page).to have_content answer[:body]
+        expect(page).to have_content "Author: #{user.email}"
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+          expect(page).to have_link "b.txt"
+        end  
+      end
+      expect(page).to have_content "Answer successfully added"
+    end
   end
 
   scenario "User can't create empty answer", js: true do

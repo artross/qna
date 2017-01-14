@@ -63,8 +63,9 @@ end
 gem 'slim'
 gem 'devise'
 gem 'bootstrap-sass'
+gem 'font-awesome-sass'
 gem 'carrierwave' # file uploader
-gem 'cocoon'      # multiple uploads
+gem 'cocoon'      # better nested forms for multiple uploads
 gem 'remotipart'  # nested forms through js
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

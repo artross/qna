@@ -1,5 +1,6 @@
 var target_question = $('#question<%= @question.id %>');
 var target_question_errors = target_question.find('.question-errors');
+var target_file_input = target_question.find(':file');
 
 target_question_errors.html('');
 target_question_errors.removeClass('alert alert-danger');
@@ -12,8 +13,19 @@ target_question_errors.removeClass('alert alert-danger');
 <% else %>
   target_question.find('.question-title').html('<%= link_to "#{@question.title}", question_path(@question), id: "q#{@question.id}" %>');
   target_question.find('.question-body').html("<%= @question.body %>");
+
   $('#edit_q<%= @question.id %>').closest('li').removeClass('hidden');
   $('#edit-question-form<%= @question.id %>').addClass('hidden');
+
+  <% if @question.attachments.any? %>
+    target_question.find('.attached-files')
+                 .html("<%= j render 'attachments/attached_files', attach_box: @question %>");
+    target_question.find('.attached-files-x-buttons')
+                 .html("<%= j render 'attachments/attached_files', attach_box: @question, show_x_buttons: true %>");
+  <% end %>
+
+  target_file_input.val('');
+  target_file_input.closest('.input-group').find(':text').val('');
 <% end %>
 
 $('.flash').html('');

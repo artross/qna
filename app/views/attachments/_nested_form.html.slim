@@ -1,0 +1,11 @@
+.form-group
+  = form_builder.fields_for :attachments, form_builder.object.attachments.build do |a|
+    .attached-files-x-buttons
+      = render "attachments/attached_files", attach_box: form_builder.object, show_x_buttons: true
+    br
+    .input-group
+      label.input-group-btn
+        span.btn.btn-success
+          i.fa.fa-plus  Add file(s)...
+        = a.file_field :file, class: "hidden", multiple: true
+      input.form-control id="filename-container" readonly="true"

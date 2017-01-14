@@ -27,13 +27,17 @@ feature "New question", %{
         expect(page).to have_content question[:body]
         expect(page).to have_content "Author: #{user.email}"
         expect(page).to have_content "Answers: 0"
-        expect(page).not_to have_content "Attached files:"
+        within('.attached-files') do
+          expect(page).not_to have_content "Attached files:"
+        end
       end
       expect(page).to have_content "Question successfully created."
     end
 
-    scenario "with one attachment" do
-      attach_file "File", "#{Rails.root}/spec/files/a.txt"
+    scenario "with one attachment", js: true do
+      with_hidden_fields do
+        attach_file "question[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+      end
       click_on "Ask Question"
 
       expect(current_path).to eq questions_path
@@ -42,14 +46,34 @@ feature "New question", %{
         expect(page).to have_content question[:body]
         expect(page).to have_content "Author: #{user.email}"
         expect(page).to have_content "Answers: 0"
-        expect(page).to have_content "Attached files:"
-        expect(page).to have_link "a.txt"
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+        end
       end
       expect(page).to have_content "Question successfully created."
     end
 
-    scenario "with several attachments"
+    scenario "with several attachments", js: true do
+      with_hidden_fields do
+        attach_file "question[attachments_attributes][0][file][]", ["#{Rails.root}/spec/files/a.txt", "#{Rails.root}/spec/files/b.txt"]
+      end
+      click_on "Ask Question"
 
+      expect(current_path).to eq questions_path
+      within('.questions') do
+        expect(page).to have_content question[:title]
+        expect(page).to have_content question[:body]
+        expect(page).to have_content "Author: #{user.email}"
+        expect(page).to have_content "Answers: 0"
+        within('.attached-files') do
+          expect(page).to have_content "Attached files:"
+          expect(page).to have_link "a.txt"
+          expect(page).to have_link "b.txt"
+        end  
+      end
+      expect(page).to have_content "Question successfully created."
+    end
   end
 
   scenario "User can't create empty question" do

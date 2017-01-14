@@ -1,0 +1,11 @@
+<% id_selector = "##{@attach_box.class.to_s.downcase}#{@attach_box.id}" %>
+
+$('<%= id_selector %>').find('.attached-files')
+                       .html('<%= render "attachments/attached_files", attach_box: @attach_box %>');
+$('<%= id_selector %>').find('.attached-files-x-buttons')
+                       .html('<%= render "attachments/attached_files", attach_box: @attach_box, show_x_buttons: true %>');
+
+$('.flash').html('');
+<% if flash.any? then %>
+ $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>                      

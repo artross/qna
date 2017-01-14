@@ -1,5 +1,6 @@
 var target_answer = $('#answer<%= @answer.id %>');
 var target_answer_errors = target_answer.find('.answer-errors');
+var target_file_input = target_answer.find(':file');
 
 target_answer_errors.html('');
 target_answer_errors.removeClass('alert alert-danger');
@@ -11,8 +12,19 @@ target_answer_errors.removeClass('alert alert-danger');
   target_answer_errors.addClass('alert alert-danger');
 <% else %>
   target_answer.find('.answer-body').html("<%= @answer.body %>");
+
   $('#edit_a<%= @answer.id %>').closest('li').removeClass('hidden');
   $('#edit-answer-form<%= @answer.id %>').addClass('hidden');
+
+  <% if @answer.attachments.any? %>
+    target_answer.find('.attached-files')
+                 .html("<%= j render 'attachments/attached_files', attach_box: @answer %>");
+    target_answer.find('.attached-files-x-buttons')
+                 .html("<%= j render 'attachments/attached_files', attach_box: @answer, show_x_buttons: true %>");
+  <% end %>
+
+  target_file_input.val('');
+  target_file_input.closest('.input-group').find(':text').val('');
 <% end %>
 
 $('.flash').html('');
