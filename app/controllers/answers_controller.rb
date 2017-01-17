@@ -4,26 +4,9 @@ class AnswersController < ApplicationController
   before_action :find_answer, except: [:create]
 
   def create
-    @answer = @question.answers.new(body: answer_params[:body], author: current_user)
-    Answer.transaction do
-      begin
-        @answer.save!
+    @answer = @question.answers.create(answer_params.merge(author: current_user))
 
-        if answer_params[:attachments_attributes] &&
-           answer_params[:attachments_attributes]["0"] &&
-           answer_params[:attachments_attributes]["0"][:file] then
-
-          answer_params[:attachments_attributes]["0"][:file].each do |file|
-            @answer.attachments.create!(file: file)
-          end
-        end
-        @transaction_successful = true
-      rescue
-        @transaction_successful = false
-      end
-    end
-
-    if @transaction_successful then
+    if @answer.persisted?
       flash.now[:notice] = "Answer successfully added."
     else
       flash.now[:alert] = "Unable to add such an answer!"
@@ -32,28 +15,10 @@ class AnswersController < ApplicationController
 
   def update
     if @answer.author_id == current_user.id then
-      Answer.transaction do
-        begin
-          @answer.update!(body: answer_params[:body])
-
-          if answer_params[:attachments_attributes] &&
-             answer_params[:attachments_attributes]["0"] &&
-             answer_params[:attachments_attributes]["0"][:file] then
-
-            answer_params[:attachments_attributes]["0"][:file].each do |file|
-              @answer.attachments.create!(file: file)
-            end
-          end
-
-          @transaction_successful = true
-        rescue
-          @transaction_successful = false
-        end
-      end
-
-      if @transaction_successful then
+      begin
+        @answer.update!(answer_params)
         flash.now[:notice] = "Answer successfully updated"
-      else
+      rescue
         flash.now[:alert] = "Unable to make such changes to an answer!"
       end
 
@@ -101,6 +66,10 @@ class AnswersController < ApplicationController
   end
 
   def answer_params
-    params.require(:answer).permit(:body, attachments_attributes: [file: []])
+    params.require(:answer).tap do |answer|
+      answer[:attachments_attributes] = answer[:attachments_attributes].each_with_object({}) do |(k,v), obj|
+        v.fetch(:file, []).each { |e| obj[obj.keys.count.to_s] = { file: e } }
+      end if answer[:attachments_attributes]
+    end.permit(:body, attachments_attributes: [:file])
   end
 end

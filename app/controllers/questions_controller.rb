@@ -18,27 +18,9 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = current_user.questions.new(title: question_params[:title], body: question_params[:body])
-    Question.transaction do
-      begin
-        @question.save!
+    @question = current_user.questions.create(question_params)
 
-        if question_params[:attachments_attributes] &&
-           question_params[:attachments_attributes]["0"] &&
-           question_params[:attachments_attributes]["0"][:file] then
-
-          question_params[:attachments_attributes]["0"][:file].each do |file|
-            @question.attachments.create!(file: file)
-          end
-        end
-        @transaction_successful = true
-      rescue
-        # probably do nothing?
-        @transaction_successful = false
-      end
-    end
-
-    if @transaction_successful then
+    if @question.persisted?
       flash[:notice] = "Question successfully created."
       redirect_to questions_path
     else
@@ -49,29 +31,13 @@ class QuestionsController < ApplicationController
 
   def update
     if @question.author_id == current_user.id then
-      Question.transaction do
-        begin
-          @question.update!(title: question_params[:title], body: question_params[:body])
-
-          if question_params[:attachments_attributes] &&
-             question_params[:attachments_attributes]["0"] &&
-             question_params[:attachments_attributes]["0"][:file] then
-
-            question_params[:attachments_attributes]["0"][:file].each do |file|
-              @question.attachments.create!(file: file)
-            end
-          end
-          @transaction_successful = true
-        rescue
-          @transaction_successful = false
-        end
-      end
-
-      if @transaction_successful then
+      begin
+        @question.update!(question_params)
         flash[:notice] = "Question successfully updated."
-      else
+      rescue
         flash.now[:alert] = "Unable to make such changes to the question!"
       end
+
     else
       flash.now[:alert] = "Unable to edit another's question!"
       render :show
@@ -100,6 +66,10 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body, attachments_attributes: [file: []])
+    params.require(:question).tap do |question|
+      question[:attachments_attributes] = question[:attachments_attributes].each_with_object({}) do |(k,v), obj|
+        v.fetch(:file, []).each { |e| obj[obj.keys.count.to_s] = { file: e } }
+      end if question[:attachments_attributes]
+    end.permit(:title, :body, attachments_attributes: [:file])
   end
 end
