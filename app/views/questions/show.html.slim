@@ -9,7 +9,6 @@
 
 .new-answer
   .well
-    - new_answer = @question.answers.build
-    = render partial: 'answers/edit_answer_form', locals: { answer: new_answer, submit_button_name: "Add answer" }
+    = render partial: 'answers/edit_answer_form', locals: { submit_button_name: "Add answer" }
 
 = link_to "Back to all Questions", questions_path

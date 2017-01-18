@@ -1,4 +1,6 @@
 class QuestionsController < ApplicationController
+  include AttachmentsParams
+
   before_action :authenticate_user!, except: [:index, :show]
   before_action :find_question, only: [:show, :update, :destroy]
 
@@ -7,10 +9,7 @@ class QuestionsController < ApplicationController
   end
 
   def show
-    # this leads to strange "undefined method `email' for nil:NilClass" error
-    #   on line 10 in 'answers/answer' partial,
-    #   so a new Answer is now being built in question's show view
-    # @answer = @question.answers.build
+    # nothing
   end
 
   def new
@@ -30,11 +29,10 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    if @question.author_id == current_user.id then
-      begin
-        @question.update!(question_params)
+    if @question.author_id == current_user.id
+      if @question.update(question_params)
         flash[:notice] = "Question successfully updated."
-      rescue
+      else
         flash.now[:alert] = "Unable to make such changes to the question!"
       end
 
@@ -45,8 +43,8 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    if @question.author_id == current_user.id then
-      if @question.destroy then
+    if @question.author_id == current_user.id
+      if @question.destroy
         flash[:notice] = "Question successfully removed."
         redirect_to questions_path
       else
@@ -66,10 +64,8 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).tap do |question|
-      question[:attachments_attributes] = question[:attachments_attributes].each_with_object({}) do |(k,v), obj|
-        v.fetch(:file, []).each { |e| obj[obj.keys.count.to_s] = { file: e } }
-      end if question[:attachments_attributes]
-    end.permit(:title, :body, attachments_attributes: [:file])
+    params.require(:question).permit(:title, :body).tap do |filtered|
+      extract_attachments_params!(params[:question], filtered)
+    end
   end
 end

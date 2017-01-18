@@ -4,8 +4,8 @@ class AttachmentsController < ApplicationController
   before_action :find_attach_box, only: [:destroy]
 
   def destroy
-    if @attachment.attach_box.author_id == current_user.id then
-      if @attachment.destroy then
+    if @attachment.attach_box.author_id == current_user.id
+      if @attachment.destroy 
         flash[:notice] = "File successfully removed."
       else
         flash.now[:alert] = "Something went wrong..."

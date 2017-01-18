@@ -1,4 +1,6 @@
 class AnswersController < ApplicationController
+  include AttachmentsParams
+  
   before_action :authenticate_user!
   before_action :find_question
   before_action :find_answer, except: [:create]
@@ -14,11 +16,10 @@ class AnswersController < ApplicationController
   end
 
   def update
-    if @answer.author_id == current_user.id then
-      begin
-        @answer.update!(answer_params)
+    if @answer.author_id == current_user.id
+      if @answer.update(answer_params)
         flash.now[:notice] = "Answer successfully updated"
-      rescue
+      else
         flash.now[:alert] = "Unable to make such changes to an answer!"
       end
 
@@ -29,8 +30,8 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    if @answer.author_id == current_user.id then
-      if @answer.destroy then
+    if @answer.author_id == current_user.id
+      if @answer.destroy
         flash.now[:notice] = "Answer successfully removed."
       else
         flash.now[:alert] = "Something went wrong..."
@@ -43,8 +44,8 @@ class AnswersController < ApplicationController
   end
 
   def best_answer
-    if @question.author_id == current_user.id then
-      if @answer.pick_as_best then
+    if @question.author_id == current_user.id
+      if @answer.pick_as_best
         flash.now[:notice] = "Best answer successfully set."
       else
         flash.now[:alert] = "Something went wrong..."
@@ -66,10 +67,8 @@ class AnswersController < ApplicationController
   end
 
   def answer_params
-    params.require(:answer).tap do |answer|
-      answer[:attachments_attributes] = answer[:attachments_attributes].each_with_object({}) do |(k,v), obj|
-        v.fetch(:file, []).each { |e| obj[obj.keys.count.to_s] = { file: e } }
-      end if answer[:attachments_attributes]
-    end.permit(:body, attachments_attributes: [:file])
+    params.require(:answer).permit(:body).tap do |filtered|
+      extract_attachments_params!(params[:answer], filtered)
+    end
   end
 end
