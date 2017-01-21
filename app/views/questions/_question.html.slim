@@ -10,6 +10,6 @@ ul.list-inline.text-muted
     li= link_to "Delete", question_path(question), method: :delete, id: "del_q#{question.id}"
 .attached-files
   - if question.attachments.any?
-    = render 'attachments/attached_files', attach_box: question
+    = render 'attachments/attached_files', attachable: question
 - if is_author
   = render partial: 'questions/edit_question_form', locals: { question: question, submit_button_name: "Save", hidden: true, remote: true }

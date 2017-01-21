@@ -3,7 +3,7 @@
 
 ul.list-inline.text-muted
   li Attached files:
-  - attach_box.attachments.select{ |a| a.persisted? }.each do |a|
+  - attachable.attachments.select{ |a| a.persisted? }.each do |a|
     li id== "#{attachment_id_prefix}#{a.id}"
       = link_to a.file.file.filename, a.file.url
       - if show_x_buttons then

@@ -18,9 +18,9 @@ target_answer_errors.removeClass('alert alert-danger');
 
   <% if @answer.attachments.any? %>
     target_answer.find('.attached-files')
-                 .html("<%= j render 'attachments/attached_files', attach_box: @answer %>");
+                 .html("<%= j render 'attachments/attached_files', attachable: @answer %>");
     target_answer.find('.attached-files-x-buttons')
-                 .html("<%= j render 'attachments/attached_files', attach_box: @answer, show_x_buttons: true %>");
+                 .html("<%= j render 'attachments/attached_files', attachable: @answer, show_x_buttons: true %>");
   <% end %>
 
   target_file_input.val('');

@@ -1,7 +1,7 @@
 .form-group
   = form_builder.fields_for :attachments, form_builder.object.attachments.build do |a|
     .attached-files-x-buttons
-      = render "attachments/attached_files", attach_box: form_builder.object, show_x_buttons: true
+      = render "attachments/attached_files", attachable: form_builder.object, show_x_buttons: true
     br
     .input-group
       label.input-group-btn

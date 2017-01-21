@@ -18,6 +18,6 @@ li.answer.list-group-item id== "answer#{answer.id}"
       li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true
   .attached-files
     - if answer.attachments.any?
-      = render 'attachments/attached_files', attach_box: answer
+      = render 'attachments/attached_files', attachable: answer
   - if is_author
     = render partial: 'answers/edit_answer_form', locals: { answer: answer, submit_button_name: "Save", hidden: true }

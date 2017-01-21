@@ -6,7 +6,7 @@ RSpec.describe AttachmentsController, type: :controller do
 
     context "with an author's question" do
       let(:question) { create(:question, author: @user) }
-      let(:attachment) { create(:attachment_to_question, attach_box: question) }
+      let(:attachment) { create(:attachment_to_question, attachable: question) }
 
       it 'removes attachment from DB' do
         attachment

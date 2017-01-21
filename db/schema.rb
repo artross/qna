@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161206110057) do
+ActiveRecord::Schema.define(version: 20170121200512) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,9 +30,9 @@ ActiveRecord::Schema.define(version: 20161206110057) do
     t.string   "file"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
-    t.integer  "attach_box_id"
-    t.string   "attach_box_type"
-    t.index ["attach_box_id", "attach_box_type"], name: "index_attachments_on_attach_box_id_and_attach_box_type", using: :btree
+    t.integer  "attachable_id"
+    t.string   "attachable_type"
+    t.index ["attachable_id", "attachable_type"], name: "index_attachments_on_attachable_id_and_attachable_type", using: :btree
   end
 
   create_table "questions", force: :cascade do |t|
