@@ -1,6 +1,4 @@
 require 'rails_helper'
-require_relative './concerns/authorable_spec'
-require_relative './concerns/attachable_spec'
 
 RSpec.describe Answer, type: :model do
   it { should validate_presence_of :body }
@@ -9,6 +7,7 @@ RSpec.describe Answer, type: :model do
   it { should belong_to(:question) }
   it_behaves_like "authorable"
   it_behaves_like "attachable"
+  it_behaves_like "votable"
 
   describe "#pick_as_best" do
     let (:question) { create(:question) }

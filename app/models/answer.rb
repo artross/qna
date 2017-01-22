@@ -1,6 +1,7 @@
 class Answer < ApplicationRecord
   include Authorable
   include Attachable
+  include Votable
 
   belongs_to :question
 
