@@ -1,11 +1,10 @@
 class Answer < ApplicationRecord
+  include Authorable
+  include Attachable
+
   belongs_to :question
-  belongs_to :author, class_name: "User"
-  has_many :attachments, as: :attachable, dependent: :destroy
 
-  validates :body, :question_id, :author_id, presence: true
-
-  accepts_nested_attributes_for :attachments, reject_if: :all_blank
+  validates :body, :question_id, presence: true
 
   def pick_as_best
     question = self.question
