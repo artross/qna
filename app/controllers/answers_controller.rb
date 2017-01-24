@@ -1,6 +1,6 @@
 class AnswersController < ApplicationController
   include AttachmentsParams
-  
+
   before_action :authenticate_user!
   before_action :find_question
   before_action :find_answer, except: [:create]
@@ -44,6 +44,7 @@ class AnswersController < ApplicationController
   end
 
   def best_answer
+    binding.pry
     if @question.author_id == current_user.id
       if @answer.pick_as_best
         flash.now[:notice] = "Best answer successfully set."

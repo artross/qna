@@ -2,7 +2,7 @@
   ul.list-group
     - @questions.each do |q|
       li.question.list-group-item id== "question#{q.id}"
-        = render partial: 'question', locals: { question: q }
+        = render partial: 'question', locals: { question: q, index_page: true }
 
 .new-question
   = link_to "Ask a new question", new_question_path, class: "btn btn-primary"

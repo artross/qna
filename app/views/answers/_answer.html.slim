@@ -1,11 +1,13 @@
 - answer ||= @answer
 - is_author = signed_in? && (current_user.id == answer.author_id)
 - is_questions_author = signed_in? && (current_user.id == @question.author_id)
+- voting_enabled = signed_in?
 
 li.answer.list-group-item id== "answer#{answer.id}"
   - if answer.best_answer
     .best-answer.alert.alert-warning= "Best answer!"
   .answer-body.lead= answer.body
+  hr
   ul.list-inline
     li.text-muted= "Author: #{answer.author.email}"
     - if is_questions_author
@@ -19,5 +21,7 @@ li.answer.list-group-item id== "answer#{answer.id}"
   .attached-files
     - if answer.attachments.any?
       = render 'attachments/attached_files', attachable: answer
+  hr
+  = render 'votes/votes_and_rating', votable: answer, votable_short_name: "a", voting_enabled: voting_enabled
   - if is_author
     = render partial: 'answers/edit_answer_form', locals: { answer: answer, submit_button_name: "Save", hidden: true }

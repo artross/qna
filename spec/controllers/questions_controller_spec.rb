@@ -43,7 +43,7 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'POST #create' do
     log_user_in
     context 'with valid question' do
-      it 'persists a question with its assosiated author' do
+      it 'persists a question with its associated author' do
         expect do
           post :create, params: { author_id: @user, question: attributes_for(:question) }
         end.to change(@user.questions, :count).by(1)

@@ -1,7 +1,10 @@
 - is_author = signed_in? && (current_user.id == question.author_id)
+- index_page ||= false
+- voting_enabled = signed_in? && !index_page
 
 h2.question-title= link_to "#{question.title}", question_path(question), id: "q#{question.id}"
 .question-body.lead= question.body
+hr
 ul.list-inline.text-muted
   li= "Author: #{question.author.email}"
   li#answers-count= "Answers: #{question.answers.count}"
@@ -11,5 +14,7 @@ ul.list-inline.text-muted
 .attached-files
   - if question.attachments.any?
     = render 'attachments/attached_files', attachable: question
+hr
+= render 'votes/votes_and_rating', votable: question, votable_short_name: "q", voting_enabled: voting_enabled
 - if is_author
   = render partial: 'questions/edit_question_form', locals: { question: question, submit_button_name: "Save", hidden: true, remote: true }

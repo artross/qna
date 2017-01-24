@@ -1,0 +1,11 @@
+- id_postfix = "#{votable_short_name}#{votable.id}"
+
+ul.votes-and-rating.list-inline.text-muted
+  li= "Rating: #{votable.rating} (#{votable.votes.count} votes)"
+  - if voting_enabled
+    li= link_to "<i class='fa fa-thumbs-o-up'></i>".html_safe,
+      votes_path(vote: { votable_id: votable, votable_type: votable.class.name, value: 1 } ),
+      method: :post, id: "vote-up-#{id_postfix}", remote: true, data: { format: :json }
+    li= link_to "<i class='fa fa-thumbs-o-down'></i>".html_safe,
+      votes_path(vote: { votable_id: votable, votable_type: votable.class.name, value: -1 } ),
+      method: :post, id: "vote-down-#{id_postfix}", remote: true, data: { format: :json }
