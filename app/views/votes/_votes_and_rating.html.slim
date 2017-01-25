@@ -1,11 +1,29 @@
 - id_postfix = "#{votable_short_name}#{votable.id}"
+- rating_votes_text = votable.votes.count == 1 ? "vote" : "votes"
+- voting_enabled &&= votable.author.id != current_user.id
+- user_vote_id = votable.user_vote_id(current_user)
+- user_vote_value = votable.user_vote_value(current_user)
+
+- vote_buttons_class = user_vote_value == 0 ? "" : "hidden"
+- vote_value_up_class = user_vote_value == 1 ? "" : "hidden"
+- vote_value_down_class = user_vote_value == -1 ? "" : "hidden"
+- unvote_button_class = user_vote_value == 0 ? "hidden" : ""
 
 ul.votes-and-rating.list-inline.text-muted
-  li= "Rating: #{votable.rating} (#{votable.votes.count} votes)"
+  li= "Rating: #{votable.rating} (#{votable.votes.count} #{rating_votes_text})"
   - if voting_enabled
     li= link_to "<i class='fa fa-thumbs-o-up'></i>".html_safe,
       votes_path(vote: { votable_id: votable, votable_type: votable.class.name, value: 1 } ),
-      method: :post, id: "vote-up-#{id_postfix}", remote: true, data: { format: :json }
+      method: :post, remote: true, data: { format: :json },
+      id: "vote-up-#{id_postfix}", class: "vote-button #{vote_buttons_class}"
     li= link_to "<i class='fa fa-thumbs-o-down'></i>".html_safe,
       votes_path(vote: { votable_id: votable, votable_type: votable.class.name, value: -1 } ),
-      method: :post, id: "vote-down-#{id_postfix}", remote: true, data: { format: :json }
+      method: :post, remote: true, data: { format: :json },
+      id: "vote-down-#{id_postfix}", class: "vote-button #{vote_buttons_class}"
+    li class== "vote-value-up #{vote_value_up_class}"
+      i.fa.fa-thumbs-up
+    li class== "vote-value-down #{vote_value_down_class}"
+      i.fa.fa-thumbs-down
+    li= link_to "unvote", vote_path(id: user_vote_id, vote: { votable_id: votable, votable_type: votable.class.name } ),
+      method: :delete, remote: true, data: { format: :json },
+      class: "unvote-button #{unvote_button_class}"

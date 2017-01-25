@@ -6,8 +6,9 @@ feature "Vote for question", %{
   IN ORDER TO: express my opinion on its value
 } do
 
-  given(:user) { create(:user) }
-  given!(:question) { create(:question, author: user) }
+  # user != question.author
+  given!(:user) { create(:user) }
+  given!(:question) { create(:question) }
 
   context "From index page" do
     scenario "Unable to vote" do
@@ -23,7 +24,7 @@ feature "Vote for question", %{
       expect(page).not_to have_link "vote-down-q#{question.id}"
     end
 
-    scenario "Correct rating is shown" do
+    scenario "Correct rating is shown", js: true do
       do_login(user)
       within("#question#{question.id}") { expect(page).to have_text "Rating: 0" }
 
@@ -48,6 +49,13 @@ feature "Vote for question", %{
 
       it_behaves_like "vote_for_votable"
     end
+
+    scenario "Can't vote for own question" do
+      do_login(question.author)
+      visit question_path(question)
+      expect(page).not_to have_link "vote-up-q#{question.id}"
+      expect(page).not_to have_link "vote-down-q#{question.id}"
+    end  
 
     scenario "Guest can't vote" do
       visit question_path(question)

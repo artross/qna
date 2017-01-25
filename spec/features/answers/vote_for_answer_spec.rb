@@ -6,8 +6,8 @@ feature "Vote for question", %{
   IN ORDER TO: express my opinion on its value
 } do
 
-  given(:user) { create(:user) }
-  given(:question) { create(:question, author: user) }
+  given!(:user) { create(:user) }
+  given!(:question) { create(:question) }
   given!(:answer) { create(:answer, question: question) }
 
   context "Votable shared examples" do
@@ -20,6 +20,13 @@ feature "Vote for question", %{
     end
 
     it_behaves_like "vote_for_votable"
+  end
+
+  scenario "Can't vote for own answer" do
+    do_login(answer.author)
+    visit question_path(question)
+    expect(page).not_to have_link "vote-up-a#{answer.id}"
+    expect(page).not_to have_link "vote-down-a#{answer.id}"
   end
 
   scenario "Guest can't vote" do
