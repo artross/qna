@@ -7,18 +7,20 @@ module Votable
   end
 
   def user_vote_value(user)
-    vote = find_vote(user)
-    vote ? vote.value : 0
+    vote = find_vote(user)&.value || 0
   end
 
   def user_vote_id(user)
-    vote = find_vote(user)
-    vote ? vote.id : 0
+    vote = find_vote(user)&.id || 0
+  end
+
+  def rating
+    votes.sum(:value)
   end
 
   private
 
   def find_vote(user)
-    Vote.where(votable: self, author: user).take
+    votes.find_by(author: user)
   end
 end

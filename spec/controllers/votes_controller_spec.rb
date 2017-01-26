@@ -55,8 +55,10 @@ RSpec.describe VotesController, type: :controller do
         post :create, params: { vote: { votable_id: votable, votable_type: votable.class.name, value: @value }, format: :json }
         expect(response).to have_http_status :success
 
+        votable.reload
         response_hash = JSON.parse(response.body)
-        expect(response_hash["votes"]).to eq(votable.reload.votes.count)
+        expect(response_hash["rating"]).to eq(votable.rating)
+        expect(response_hash["votes"]).to eq(votable.votes.count)
         expect(response_hash["region"]).to eq("#{votable_type}#{votable.id}")
         expect(response_hash["action"]).to eq("vote")
         expect(response_hash["vote_value"]).to eq(@value)
@@ -80,7 +82,6 @@ RSpec.describe VotesController, type: :controller do
         [:question, :answer].each do |votable_type|
           vote = create("vote_for_#{votable_type}")
           votable = vote.votable
-          votable.update(rating: vote.value)  # because votable's rating normally changes only through Votes controller actions
 
           delete :destroy, params: { id: vote.id, vote: { votable_id: votable, votable_type: votable.class.name }, format: :json }
           expect(votable.reload.rating).to eq(0)
@@ -92,11 +93,6 @@ RSpec.describe VotesController, type: :controller do
       let(:votable_type) { [:question, :answer].sample }
       let(:vote) { create("vote_for_#{votable_type}", author: @user) }
       let!(:votable) { vote.votable }
-
-      it "assigns correct @vote" do
-        delete :destroy, params: { id: vote.id, vote: { votable_id: votable, votable_type: votable.class.name }, format: :json }
-        expect(assigns(:vote)).to eq(vote)
-      end
 
       context "removes a vote from DB" do
         it "decreases author's votes count" do
@@ -123,8 +119,10 @@ RSpec.describe VotesController, type: :controller do
         delete :destroy, params: { id: vote.id, vote: { votable_id: votable, votable_type: votable.class.name }, format: :json }
         expect(response).to have_http_status :success
 
+        votable.reload
         response_hash = JSON.parse(response.body)
-        expect(response_hash["votes"]).to eq(votable.reload.votes.count)
+        expect(response_hash["rating"]).to eq(votable.rating)
+        expect(response_hash["votes"]).to eq(votable.votes.count)
         expect(response_hash["region"]).to eq("#{votable_type}#{votable.id}")
         expect(response_hash["action"]).to eq("unvote")
       end
