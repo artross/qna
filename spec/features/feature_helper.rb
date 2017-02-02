@@ -12,6 +12,8 @@ RSpec.configure do |config|
   config.before(:each) { DatabaseCleaner.start }
   config.after(:each) { DatabaseCleaner.clean }
 
+  Capybara.server = :puma
+
   Capybara.register_driver :poltergeist do |app|
     Capybara::Poltergeist::Driver.new(
       app,
