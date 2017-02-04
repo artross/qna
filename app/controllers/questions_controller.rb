@@ -72,6 +72,16 @@ class QuestionsController < ApplicationController
 
   def broadcast_question
     return if @question.errors.any?
-    ActionCable.server.broadcast 'questions', { question: @question, action: 'broadcast' }
+
+    ActionCable.server.broadcast('questions', { question: {
+        id: @question.id,
+        title: @question.title,
+        body: @question.body,
+        authorId: @question.author_id,
+        authorEmail: @question.author.email,
+        path: question_path(@question),
+        attachments: @question.attachments_array_for_broadcasting
+      }
+    })
   end
 end

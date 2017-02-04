@@ -1,0 +1,24 @@
+<li class='question list-group-item' id='<%= "question" + question.id %>'>
+  <h2 class='question-title'>
+    <a href='<%= question.path %>' id='<%= "q" + question.id %>'><%= question.title %></a>
+  </h2>
+  <div class='question-body lead'>
+    <%= question.body %>
+  </div>
+  <hr />
+  <ul class='list-inline text-muted'>
+    <li>
+      <%= "Author: " + question.authorEmail %>
+    </li>
+    <li id='answers-count'>
+      Answers: 0
+    </li>
+  </ul>
+  <div class='attached-files'>
+    <% if (question.attachments.length > 0) { %>
+      <%= JST['templates/attached_files']({ attachments: question.attachments }) %>
+    <% } %>
+  </div>
+  <hr />
+  <%= JST['templates/votes_and_rating']() %>
+</li>

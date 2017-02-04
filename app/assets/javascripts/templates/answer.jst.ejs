@@ -1,0 +1,30 @@
+<li class='answer list-group-item' id= '<%= "answer" + answer.id %>'>
+  <% if (answer.bestAnswer) { %>
+    <div class='best-answer alert alert-warning'>
+      Best answer!
+    </div>
+  <% } %>
+  <div class='answer-body lead'>
+    <%= answer.body %>
+  </div>
+  <hr />
+  <ul class='list-inline'>
+    <li class='text-muted'>
+      <%= "Author: " + answer.authorEmail %>
+    </li>
+    <% if (isQuestionsAuthor) { %>
+        <li class='best-answer-button'>
+          <form class='button_to' method='post' action='<%= answer.bestAnswerPath %>' data-remote='true'>
+            <input type='Submit' value='Pick as Best' />
+          </form>
+        </li>
+    <% } %>
+  </ul>
+  <div class='attached-files'>
+    <% if (answer.attachments.length > 0) { %>
+      <%= JST['templates/attached_files']({ attachments: answer.attachments }) %>
+    <% } %>
+  </div>
+  <hr />
+  <%= JST['templates/votes_and_rating']() %>
+</li>

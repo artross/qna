@@ -4,6 +4,7 @@ class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :find_question
   before_action :find_answer, except: [:create]
+  after_action :broadcast_answer, only: [:create]
 
   def create
     @answer = @question.answers.create(answer_params.merge(author: current_user))
@@ -70,5 +71,26 @@ class AnswersController < ApplicationController
     params.require(:answer).permit(:body).tap do |filtered|
       extract_attachments_params!(params[:answer], filtered)
     end
+  end
+
+  def broadcast_answer
+    return if @answer.errors.any?
+
+    ActionCable.server.broadcast('answers', {
+      question: {
+        id: @question.id,
+        answersCount: @question.answers.count,
+        authorId: @question.author_id
+      },
+      answer: {
+        id: @answer.id,
+        body: @answer.body,
+        bestAnswer: @answer.best_answer,
+        authorId: @answer.author_id,
+        authorEmail: @answer.author.email,
+        attachments: @answer.attachments_array_for_broadcasting,
+        bestAnswerPath: best_answer_question_answer_path(@question, @answer)
+      }
+    })
   end
 end

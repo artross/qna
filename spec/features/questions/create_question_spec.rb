@@ -70,9 +70,47 @@ feature "New question", %{
           expect(page).to have_content "Attached files:"
           expect(page).to have_link "a.txt"
           expect(page).to have_link "b.txt"
-        end  
+        end
       end
       expect(page).to have_content "Question successfully created."
+    end
+  end
+
+  context "With multiple sessions" do
+    scenario "New question appears on another user's index page", js: true do
+      using_session 'user' do
+        do_login(user)
+      end
+
+      using_session 'guest' do
+        visit questions_path
+      end  
+
+      using_session 'user' do
+        click_on "Ask a new question"
+
+        fill_in "Title", with: question[:title]
+        fill_in "Body", with: question[:body]
+
+        with_hidden_fields do
+          attach_file "question[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+        end
+
+        click_on "Ask Question"
+      end
+
+      using_session 'guest' do
+        within('.questions') do
+          expect(page).to have_content question[:title]
+          expect(page).to have_content question[:body]
+          expect(page).to have_content "Author: #{user.email}"
+          expect(page).to have_content "Answers: 0"
+          within('.attached-files') do
+            expect(page).to have_content "Attached files:"
+            expect(page).to have_link "a.txt"
+          end
+        end
+      end
     end
   end
 

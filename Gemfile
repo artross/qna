@@ -68,6 +68,7 @@ gem 'carrierwave' # file uploader
 gem 'cocoon'      # better nested forms for multiple uploads
 gem 'remotipart'  # nested forms through js
 gem 'gon'         # easy way to async-throw values to client's js files
+gem 'ejs'         # client-side js templating
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
