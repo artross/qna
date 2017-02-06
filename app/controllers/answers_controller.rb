@@ -2,11 +2,12 @@ class AnswersController < ApplicationController
   include AttachmentsParams
 
   before_action :authenticate_user!
-  before_action :find_question
   before_action :find_answer, except: [:create]
+  before_action :assign_question, except: [:create]
   after_action :broadcast_answer, only: [:create]
 
   def create
+    @question = Question.find(params[:question_id])
     @answer = @question.answers.create(answer_params.merge(author: current_user))
 
     if @answer.persisted?
@@ -59,16 +60,16 @@ class AnswersController < ApplicationController
 
   private
 
-  def find_question
-    @question = Question.find(params[:question_id])
-  end
-
   def find_answer
     @answer = Answer.find(params[:id])
   end
 
+  def assign_question
+    @question = @answer.question
+  end
+
   def answer_params
-    params.require(:answer).permit(:body).tap do |filtered|
+    params.require(:answer).permit(:body, comments_attributes: [:body]).tap do |filtered|
       extract_attachments_params!(params[:answer], filtered)
     end
   end
@@ -89,7 +90,7 @@ class AnswersController < ApplicationController
         authorId: @answer.author_id,
         authorEmail: @answer.author.email,
         attachments: @answer.attachments_array_for_broadcasting,
-        bestAnswerPath: best_answer_question_answer_path(@question, @answer)
+        bestAnswerPath: best_answer_answer_path(@answer)
       }
     })
   end

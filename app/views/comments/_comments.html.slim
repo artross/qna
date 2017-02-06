@@ -1,0 +1,10 @@
+ul.comments
+  - commentable.comments.select{ |c| c.persisted? }.each do |c|
+    li id== "comment#{c.id}"
+      .small= "#{c.body} (by #{c.author.email})"
+- if signed_in? && !index_page
+  = link_to "Add comment", "", remote: true
+  = form_for [commentable, commentable.comments.build] do |f|
+    = f.label :body
+    = f.text_area :body
+    = f.submit "Submit", class: "btn btn-primary btn-sm"

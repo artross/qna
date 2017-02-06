@@ -3,7 +3,7 @@
 - answer ||= @question.answers.build
 - form_id = answer.id ? "edit-answer-form#{answer.id}" : "new-answer-form"
 
-= form_for [@question, answer], html: { id: form_id, class: form_class }, remote: true, data: { format: :js } do |f|
+= form_for [answer.question, answer], html: { id: form_id, class: form_class }, remote: true, data: { format: :js } do |f|
   .answer-errors
   .form-group
     = f.label :body, "Your answer"

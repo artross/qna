@@ -12,16 +12,22 @@ li.answer.list-group-item id== "answer#{answer.id}"
     li.text-muted= "Author: #{answer.author.email}"
     - if is_questions_author
       - if answer.best_answer
-        li.best-answer-button.hidden= button_to "Pick as Best", best_answer_question_answer_path(@question, answer), remote: true
+        li.best-answer-button.hidden= button_to "Pick as Best", best_answer_answer_path(answer), remote: true
       - else
-        li.best-answer-button= button_to "Pick as Best", best_answer_question_answer_path(@question, answer), remote: true
+        li.best-answer-button= button_to "Pick as Best", best_answer_answer_path(answer), remote: true
     - if is_author
       li.edit-answer-link= link_to "Edit", "#", id: "edit_a#{answer.id}", data: { answer_id: answer.id }
-      li= link_to "Delete", question_answer_path(@question, answer), id: "del_a#{answer.id}", method: :delete, remote: true
+      li= link_to "Delete", answer_path(answer), id: "del_a#{answer.id}", method: :delete, remote: true
   .attached-files
     - if answer.attachments.any?
       = render 'attachments/attached_files', attachable: answer
   hr
   = render 'votes/votes_and_rating', votable: answer, votable_short_name: "a", voting_enabled: voting_enabled
   - if is_author
-    = render partial: 'answers/edit_answer_form', locals: { answer: answer, submit_button_name: "Save", hidden: true }
+    = form_for answer, html: { id: "edit-answer-form#{answer.id}", class: "hidden" }, remote: true, data: { format: :js } do |f|
+      .answer-errors
+      .form-group
+        = f.label :body, "Your answer"
+        = f.text_area :body, class: "form-control"
+      = render "attachments/nested_form", form_builder: f
+      = f.submit "Save", class: "btn btn-primary"

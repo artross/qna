@@ -65,7 +65,7 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body).tap do |filtered|
+    params.require(:question).permit(:title, :body, comments_attributes: [:body]).tap do |filtered|
       extract_attachments_params!(params[:question], filtered)
     end
   end
