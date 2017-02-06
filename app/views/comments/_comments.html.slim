@@ -3,8 +3,10 @@ ul.comments
     li id== "comment#{c.id}"
       .small= "#{c.body} (by #{c.author.email})"
 - if signed_in? && !index_page
-  = link_to "Add comment", "", remote: true
-  = form_for [commentable, commentable.comments.build] do |f|
-    = f.label :body
-    = f.text_area :body
+  hr
+  = link_to "Add comment", "#", class: "add-comment-link", data: { short_name_with_id: "#{short_name}#{commentable.id}" }, remote: true
+  = form_for [commentable, commentable.comments.build], html: { id: "add-comment-form-#{short_name}#{commentable.id}", class: "add-comment-form hidden" }, remote: true do |f|
+    .form-group
+      = f.label :body, "Your comment"
+      = f.text_area :body, class: "form-control"
     = f.submit "Submit", class: "btn btn-primary btn-sm"
