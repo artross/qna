@@ -1,0 +1,9 @@
+$('ul.comments').append('<li class="small"><%= "#{@comment.body} (by #{@comment.author.email})" %></li>');
+$('.add-comment-link').removeClass('hidden');
+$('.add-comment-form').addClass('hidden');
+$('#comment_body').val('');
+
+$('.flash').html('');
+<% if flash.any? then %>
+  $('.flash').html('<%= render "layouts/flash" %>');
+<% end %>

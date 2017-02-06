@@ -1,8 +1,7 @@
 ul.comments
-  - commentable.comments.select{ |c| c.persisted? }.each do |c|
-    li id== "comment#{c.id}"
-      .small= "#{c.body} (by #{c.author.email})"
-- if signed_in? && !index_page
+  - commentable.comments.select{ |c| c.persisted? }.sort_by{ |c| c.created_at }.each do |c|
+    li.small= "#{c.body} (by #{c.author.email})"
+- if signed_in?
   hr
   = link_to "Add comment", "#", class: "add-comment-link", data: { short_name_with_id: "#{short_name}#{commentable.id}" }, remote: true
   = form_for [commentable, commentable.comments.build], html: { id: "add-comment-form-#{short_name}#{commentable.id}", class: "add-comment-form hidden" }, remote: true do |f|
