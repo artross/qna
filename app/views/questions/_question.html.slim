@@ -18,3 +18,6 @@ hr
 = render 'votes/votes_and_rating', votable: question, votable_short_name: "q", voting_enabled: voting_enabled
 - if is_author
   = render partial: 'questions/edit_question_form', locals: { question: question, submit_button_name: "Save", hidden: true, remote: true }
+.comments
+  - if !index_page
+    = render 'comments/comments', commentable: question, index_page: index_page, short_name: "q"

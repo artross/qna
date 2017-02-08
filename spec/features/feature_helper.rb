@@ -12,6 +12,12 @@ RSpec.configure do |config|
   config.before(:each) { DatabaseCleaner.start }
   config.after(:each) { DatabaseCleaner.clean }
 
+  Capybara.register_server :puma do |app, port, host|
+    require 'rack/handler/puma'
+    Rack::Handler::Puma.run(app, Host: host, Port: port, Threads: "0:4", config_files: ["-"])
+  end
+  Capybara.server = :puma
+
   Capybara.register_driver :poltergeist do |app|
     Capybara::Poltergeist::Driver.new(
       app,

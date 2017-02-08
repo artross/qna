@@ -2,10 +2,12 @@ class AnswersController < ApplicationController
   include AttachmentsParams
 
   before_action :authenticate_user!
-  before_action :find_question
   before_action :find_answer, except: [:create]
+  before_action :assign_question, except: [:create]
+  after_action :broadcast_answer, only: [:create]
 
   def create
+    @question = Question.find(params[:question_id])
     @answer = @question.answers.create(answer_params.merge(author: current_user))
 
     if @answer.persisted?
@@ -58,17 +60,38 @@ class AnswersController < ApplicationController
 
   private
 
-  def find_question
-    @question = Question.find(params[:question_id])
-  end
-
   def find_answer
     @answer = Answer.find(params[:id])
   end
 
+  def assign_question
+    @question = @answer.question
+  end
+
   def answer_params
-    params.require(:answer).permit(:body).tap do |filtered|
+    params.require(:answer).permit(:body, comments_attributes: [:body]).tap do |filtered|
       extract_attachments_params!(params[:answer], filtered)
     end
+  end
+
+  def broadcast_answer
+    return if @answer.errors.any?
+
+    ActionCable.server.broadcast('answers', {
+      question: {
+        id: @question.id,
+        answersCount: @question.answers.count,
+        authorId: @question.author_id
+      },
+      answer: {
+        id: @answer.id,
+        body: @answer.body,
+        bestAnswer: @answer.best_answer,
+        authorId: @answer.author_id,
+        authorEmail: @answer.author.email,
+        attachments: @answer.attachments_array_for_broadcasting,
+        bestAnswerPath: best_answer_answer_path(@answer)
+      }
+    })
   end
 end

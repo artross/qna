@@ -1,0 +1,10 @@
+<ul class='list-inline text-muted'>
+  <li>
+    Attached files:
+  </li>
+  <% attachments.forEach(function(a) { %>
+    <li id='<%= "attachment" + a.id %>'>
+      <a href='<%= a.path %>'><%= a.fileName %></a>
+    </li>
+  <% }) %>
+</ul>

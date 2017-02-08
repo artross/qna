@@ -1,5 +1,5 @@
 
-.question id== "question#{@question.id}"
+.question.question-show id== "question#{@question.id}" data-id== @question.id
   .well
     = render @question
 
@@ -10,6 +10,12 @@
 
 .new-answer
   .well
-    = render partial: 'answers/edit_answer_form', locals: { submit_button_name: "Add answer" }
+    = form_for [@question, @question.answers.build], html: { id: "new-answer-form" }, remote: true, data: { format: :js } do |f|
+      .answer-errors
+      .form-group
+        = f.label :body, "Your answer"
+        = f.text_area :body, class: "form-control"
+      = render "attachments/nested_form", form_builder: f
+      = f.submit "Add answer", class: "btn btn-primary"
 
 = link_to "Back to all Questions", questions_path

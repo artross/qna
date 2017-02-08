@@ -67,9 +67,68 @@ feature "New answer", %{
           expect(page).to have_content "Attached files:"
           expect(page).to have_link "a.txt"
           expect(page).to have_link "b.txt"
-        end  
+        end
       end
       expect(page).to have_content "Answer successfully added"
+    end
+  end
+
+  context "With multiple session" do
+    scenario "New answer appears on another user's page with the same question", js: true do
+      using_session 'user' do
+        do_login user
+        click_on "q#{question.id}"
+      end
+
+      using_session 'guest' do
+        visit question_path(question)
+      end
+
+      using_session 'user' do
+        fill_in "Your answer", with: answer[:body]
+        with_hidden_fields do
+          attach_file "answer[attachments_attributes][0][file][]", "#{Rails.root}/spec/files/a.txt"
+        end
+        click_on "Add answer"
+      end
+
+      using_session 'guest' do
+        expect(page).to have_content "Answers: 1"
+        within('.answers') do
+          expect(page).to have_content answer[:body]
+          expect(page).to have_content "Author: #{user.email}"
+          within('.attached-files') do
+            expect(page).to have_content "Attached files:"
+            expect(page).to have_link "a.txt"
+          end
+        end
+      end
+    end
+
+    scenario "New answer does not appear on another user's page with another question", js: true do
+      second_question = create(:question)
+
+      using_session 'user' do
+        do_login user
+        click_on "q#{question.id}"
+      end
+
+      using_session 'guest' do
+        visit question_path(second_question)
+      end
+
+      using_session 'user' do
+        fill_in "Your answer", with: answer[:body]
+        click_on "Add answer"
+      end
+
+      using_session 'guest' do
+        expect(page).to have_content "Answers: 0"
+        within('.answers') do
+          expect(page).not_to have_content answer[:body]
+          expect(page).not_to have_content "Author: #{user.email}"
+        end
+      end
     end
   end
 

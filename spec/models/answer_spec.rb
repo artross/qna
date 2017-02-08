@@ -8,6 +8,7 @@ RSpec.describe Answer, type: :model do
   it_behaves_like "authorable"
   it_behaves_like "attachable"
   it_behaves_like "votable"
+  it_behaves_like "commentable"
 
   describe "#pick_as_best" do
     let (:question) { create(:question) }
