@@ -1,7 +1,11 @@
-$('ul.comments').append('<li class="small"><%= "#{@comment.body} (by #{@comment.author.email})" %></li>');
-$('.add-comment-link').removeClass('hidden');
-$('.add-comment-form').addClass('hidden');
-$('#comment_body').val('');
+<% if !@comment.errors.any? %>
+  var region = $('<%= "##{@region}" %>');
+
+  region.find('ul.comments').append('<li class="small"><%= "#{@comment.body} (by #{@comment.author.email})" %></li>');
+  region.find('.add-comment-link').removeClass('hidden');
+  region.find('.add-comment-form').addClass('hidden');
+  region.find('#comment_body').val('');
+<% end %>
 
 $('.flash').html('');
 <% if flash.any? then %>

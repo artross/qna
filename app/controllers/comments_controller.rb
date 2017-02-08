@@ -4,6 +4,7 @@ class CommentsController < ApplicationController
 
   def create
     @comment = @commentable.comments.create(comment_params.merge(author: current_user))
+    @region = "#{@commentable.class.name.underscore}#{@commentable.id}"
     if @comment.persisted?
       flash.now[:notice] = "Comment successfully added"
     else

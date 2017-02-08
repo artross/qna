@@ -31,3 +31,5 @@ li.answer.list-group-item id== "answer#{answer.id}"
         = f.text_area :body, class: "form-control"
       = render "attachments/nested_form", form_builder: f
       = f.submit "Save", class: "btn btn-primary"
+  .comments
+    = render 'comments/comments', commentable: answer, index_page: false, short_name: "a"
